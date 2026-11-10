@@ -1,0 +1,80 @@
+{
+ "slot": "pm",
+ "pillar": "descanso",
+ "topic": "Boca seca al despertar: respirar por la boca de noche",
+ "publish_at": "2026-11-10T19:00:00",
+ "caption": "¿Te levantas con la boca seca? 🥱 Puede que pases la noche respirando por la boca.\n\nCuatro cosas que puedes probar hoy:\n1️⃣ Ventila 10 min antes de dormir\n2️⃣ Agua durante la tarde, no todo de golpe\n3️⃣ Prueba a dormir de lado\n4️⃣ Si notas la nariz cerrada, dale espacio al aire\n\nGuárdalo para esta noche y cuéntanos: ¿duermes con la boca abierta? 👇",
+ "hashtags": [
+  "#dormirmejor",
+  "#descanso",
+  "#respiracion",
+  "#bocaseca",
+  "#habitossaludables",
+  "#airnaze"
+ ],
+ "tiktok_title": "¿Boca seca al despertar?",
+ "music_seed": 2,
+ "scenes": [
+  {
+   "type": "hook",
+   "voice": "¿Te despiertas con la boca seca y sensación de no haber descansado? Puede que pases la noche respirando por la boca.",
+   "big": "¿Boca seca al despertar?",
+   "small": "Puede que respires por la boca mientras duermes",
+   "accent": [
+    "seca"
+   ]
+  },
+  {
+   "type": "versus",
+   "voice": "Tu nariz filtra, calienta y humedece el aire. Por la boca entra tal cual: seco y frío.",
+   "left": "Boca",
+   "lsub": "aire seco y frío",
+   "right": "Nariz",
+   "rsub": "aire filtrado y templado"
+  },
+  {
+   "type": "stat",
+   "voice": "Y respiramos unas veinte mil veces al día. Por eso importa por dónde entra el aire.",
+   "value": "20.000",
+   "label": "respiraciones al día, más o menos"
+  },
+  {
+   "type": "tip",
+   "n": 1,
+   "icon": "window",
+   "voice": "Uno: ventila la habitación un rato antes de acostarte. Un ambiente cargado y seco no ayuda.",
+   "title": "Ventila antes de dormir",
+   "sub": "10 minutos con la ventana abierta"
+  },
+  {
+   "type": "tip",
+   "n": 2,
+   "icon": "drop",
+   "voice": "Dos: bebe agua a lo largo de la tarde, no todo de golpe justo antes de dormir.",
+   "title": "Agua durante la tarde",
+   "sub": "Poco a poco, no un vaso enorme a las doce"
+  },
+  {
+   "type": "tip",
+   "n": 3,
+   "icon": "bed",
+   "voice": "Tres: prueba a dormir de lado. Boca arriba es más fácil acabar con la boca abierta.",
+   "title": "Prueba a dormir de lado",
+   "sub": "Boca arriba, la boca se abre más fácil"
+  },
+  {
+   "type": "tip",
+   "n": 4,
+   "icon": "wind",
+   "voice": "Y cuatro: si al acostarte notas la nariz algo cerrada, un dilatador nasal externo como AirNaze ayuda a que el aire pase más fácil.",
+   "title": "Dale espacio al aire",
+   "sub": "Un dilatador externo se pega por fuera de la nariz"
+  },
+  {
+   "type": "brand",
+   "voice": "Guárdalo para esta noche. Y cuéntame en comentarios: ¿tú duermes con la boca abierta?",
+   "big": "Guárdalo para esta noche",
+   "small": "¿Duermes con la boca abierta?"
+  }
+ ]
+}
