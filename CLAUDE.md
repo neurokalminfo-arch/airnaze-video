@@ -15,6 +15,8 @@ Hay dos ejecuciones al día: slot `am` = **10:00** y slot `pm` = **19:00** (hora
    - Si Metricool da "internal error while storing the media", reintenta tras unos segundos.
    - Si la hora del slot ya pasó, no lo publiques: dilo en el resumen.
    - NO toques las marcas Fetbull, Valkyra, neurokalm ni La Gran Pregunta.
+   - **Verifica siempre** con `getScheduledPosts` (blogId 7796113, hoy, Europe/Madrid) que el post queda con `draft: false`, `autoPublish: true` y la hora correcta. Si sale `draft: true`, corrígelo con `updateScheduledPost` (mismo contenido completo, `draft: false`) y vuelve a comprobarlo. Un post en borrador NO se publica.
+   - Si el episodio del slot ya existía en el repo, no crees otro, pero haz igualmente esta verificación en Metricool y corrige el borrador si hace falta (si el post no existe y la hora no ha pasado, prográmalo con el `final.mp4` ya subido).
 7. Resumen final: tema, gancho, hora, enlace del planner de Metricool.
 
 ## Marca
