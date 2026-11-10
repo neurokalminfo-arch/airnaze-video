@@ -328,7 +328,52 @@ def scene_brand(img, s, t, dur, cache):
         pill.paste(L, (30, 10), L)
         paste_t(img, pill, W / 2, 1320, alpha=p3, scale=0.9 + 0.1 * p3)
 
-DRAW = {"hook": scene_hook, "tip": scene_tip, "stat": scene_stat, "versus": scene_versus, "breath": scene_breath, "brand": scene_brand}
+PRODUCT_DIR = os.path.join(os.path.dirname(HERE), "assets", "product")
+
+def load_product(name):
+    path = os.path.join(PRODUCT_DIR, name) if name else ""
+    if not name or not os.path.exists(path):
+        sys.exit(f"Falta la foto del producto: {path or '(sin img)'} — usa una de assets/product/ o cambia la escena")
+    im = Image.open(path).convert("RGB")
+    side = 860; r = max(side / im.width, side / im.height)
+    im = im.resize((int(im.width * r) + 1, int(im.height * r) + 1), Image.LANCZOS)
+    l, tp = (im.width - side) // 2, (im.height - side) // 2
+    return im.crop((l, tp, l + side, tp + side))
+
+def scene_product(img, s, t, dur, cache):
+    """Foto real de assets/product/ (s['img']), con zoom lento y rasgos en chips (s['items'])."""
+    d = ImageDraw.Draw(img, "RGBA")
+    if "photo" not in cache: cache["photo"] = load_product(s.get("img"))
+    ph = cache["photo"]; side = ph.width
+    p = eo(prog(t, 0, 0.6))
+    z = 1.0 + 0.06 * clamp(t / max(dur, 0.1))
+    inner = ph.resize((int(side * z), int(side * z)), Image.BILINEAR)
+    off = (inner.width - side) // 2
+    inner = inner.crop((off, off, off + side, off + side))
+    mask = Image.new("L", (side, side), 0); ImageDraw.Draw(mask).rounded_rectangle([0, 0, side - 1, side - 1], 56, fill=255)
+    card = Image.new("RGBA", (side, side), (0, 0, 0, 0)); card.paste(inner, (0, 0), mask)
+    cy = 640 + (1 - p) * 700
+    d.rounded_rectangle([W/2 - side/2 - 14, cy - side/2 - 14, W/2 + side/2 + 14, cy + side/2 + 14], 66, fill=(255, 255, 255, int(40 * p)))
+    paste_t(img, card, W / 2, cy, alpha=p)
+    if s.get("tag"):
+        tf = F("InterDisplay-ExtraBold.otf", 46)
+        L = text_layer([s["tag"]], tf, NAVY, shadow=False)
+        pill = Image.new("RGBA", (L.width + 40, L.height + 10), (0, 0, 0, 0))
+        ImageDraw.Draw(pill).rounded_rectangle([0, 0, pill.width - 1, pill.height - 1], 36, fill=MINT + (255,))
+        pill.paste(L, (20, 5), L)
+        paste_t(img, pill, W / 2, cy - side / 2, alpha=eo(prog(t, 0.4, 0.4)))
+    cf = F("Inter-SemiBold.otf", 48)
+    for i, it in enumerate(s.get("items", [])[:3]):
+        q = eback(prog(t, 0.7 + i * 0.35, 0.45))
+        if q <= 0: continue
+        L = text_layer([it], cf, WHITE, shadow=False)
+        chip = Image.new("RGBA", (L.width + 70, L.height + 6), (0, 0, 0, 0))
+        cd = ImageDraw.Draw(chip); cd.rounded_rectangle([0, 0, chip.width - 1, chip.height - 1], 34, fill=BLUE + (240,))
+        cd.ellipse([22, chip.height / 2 - 9, 40, chip.height / 2 + 9], fill=MINT + (255,))
+        chip.paste(L, (45, 3), L)
+        paste_t(img, chip, W / 2, 1180 + i * 105, alpha=clamp(q), scale=0.85 + 0.15 * clamp(q))
+
+DRAW = {"hook": scene_hook, "tip": scene_tip, "stat": scene_stat, "versus": scene_versus, "breath": scene_breath, "brand": scene_brand, "product": scene_product}
 TRANS = ["slide", "zoom", "wipe", "fade"]
 
 # ---------- audio ----------
