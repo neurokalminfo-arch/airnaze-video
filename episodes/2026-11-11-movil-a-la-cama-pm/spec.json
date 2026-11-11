@@ -1,0 +1,30 @@
+{
+ "slot": "pm",
+ "pillar": "descanso",
+ "topic": "Pasar del móvil a la almohada sin pausa: rutina corta de desconexión antes de dormir",
+ "publish_at": "2026-11-11T19:00:00",
+ "stage": "atraer",
+ "series": "tu-noche-mejor",
+ "hook_type": "error",
+ "cta": "comentar",
+ "caption": "¿Del móvil a la almohada sin pausa? 📱➡️🛏️ Tu cabeza sigue a mil y el sueño no llega.\n\nPrueba esta mini rutina esta noche:\n1️⃣ Móvil lejos de la cama\n2️⃣ Luz baja media hora antes\n3️⃣ En la cama, respira lento por la nariz\n4️⃣ Si notas la nariz algo cerrada, dale espacio al aire\n\nGuárdalo y cuéntame: ¿a qué hora sueltas el móvil por la noche? 👇",
+ "hashtags": ["#dormirmejor", "#descanso", "#desconectar", "#rutinanocturna", "#respiracion", "#airnaze"],
+ "tiktok_title": "El error antes de dormir",
+ "music_seed": 11,
+ "scenes": [
+  {"type": "hook", "voice": "Error típico: pasar del móvil a la almohada sin pausa. Tu cabeza sigue a mil y el sueño no llega.",
+   "big": "¿Del móvil a la cama sin pausa?", "small": "Tu cabeza sigue a mil", "accent": ["sin pausa"]},
+  {"type": "versus", "voice": "Date un rato de transición antes de dormir.",
+   "left": "Sin pausa", "lsub": "cabeza a mil", "right": "Con pausa", "rsub": "modo noche"},
+  {"type": "tip", "n": 1, "icon": "phone", "voice": "Uno: deja el móvil lejos de la cama.",
+   "title": "Móvil lejos de la cama", "sub": "Mejor cargando fuera del cuarto"},
+  {"type": "tip", "n": 2, "icon": "moon", "voice": "Dos: baja las luces media hora antes. Tu cuerpo entiende que se acaba el día.",
+   "title": "Luz baja antes de dormir", "sub": "Media hora con luz tenue"},
+  {"type": "breath", "voice": "Tres: ya en la cama, inspira por la nariz y suelta el aire despacio. Así, unas cuantas veces.",
+   "big": "Inspira por la nariz, suelta despacio"},
+  {"type": "tip", "n": 4, "icon": "nose", "voice": "Y si notas la nariz algo cerrada, AirNaze se pega por fuera y ayuda a que el aire pase más fácil.",
+   "title": "¿Nariz algo cerrada?", "sub": "AirNaze se pega por fuera de la nariz"},
+  {"type": "brand", "voice": "Guárdalo para esta noche. Y cuéntame: ¿a qué hora sueltas el móvil?",
+   "big": "Guárdalo para esta noche", "small": "¿A qué hora sueltas el móvil?"}
+ ]
+}
