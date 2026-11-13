@@ -1,0 +1,30 @@
+{
+ "slot": "pm",
+ "pillar": "descanso",
+ "topic": "Nariz seca al despertar en invierno: la calefacción reseca el cuarto; ventilar, bajar la calefacción y respirar por la nariz",
+ "publish_at": "2026-11-13T19:00:00",
+ "stage": "conectar",
+ "series": "me-preguntasteis",
+ "hook_type": "dato",
+ "cta": "comentar",
+ "caption": "Me preguntasteis por qué en invierno os despertáis con la nariz seca 🥶🛏️ Muchas veces la culpa es de la calefacción: reseca el aire del cuarto.\n\nPrueba esto esta noche:\n1️⃣ Ventila 10 minutos antes de acostarte\n2️⃣ Baja un poco la calefacción por la noche\n3️⃣ En la cama, respira lento por la nariz\n\nGuárdalo y cuéntame: ¿duermes con la calefacción puesta? 👇",
+ "hashtags": ["#dormirmejor", "#descanso", "#invierno", "#calefaccion", "#rutinanocturna", "#respiracion", "#airnaze"],
+ "tiktok_title": "¿Nariz seca al despertar en invierno?",
+ "music_seed": 14,
+ "scenes": [
+  {"type": "hook", "voice": "Me preguntasteis por qué en invierno os despertáis con la nariz seca. Muchas veces, es la calefacción.",
+   "big": "¿Nariz seca al despertar en invierno?", "small": "Me lo preguntasteis", "accent": ["en invierno"]},
+  {"type": "versus", "voice": "Con la calefacción alta, el aire del cuarto se reseca.",
+   "left": "Calor", "lsub": "aire reseco", "right": "Fresco", "rsub": "aire más amable"},
+  {"type": "tip", "n": 1, "icon": "window", "voice": "Uno: ventila diez minutos antes de acostarte.",
+   "title": "Ventila antes de dormir", "sub": "Diez minutos con la ventana abierta"},
+  {"type": "tip", "n": 2, "icon": "moon", "voice": "Dos: baja un poco la calefacción por la noche.",
+   "title": "Baja la calefacción", "sub": "Un cuarto fresco para dormir"},
+  {"type": "breath", "voice": "Tres: ya en la cama, unas respiraciones lentas por la nariz.",
+   "big": "Respira lento por la nariz"},
+  {"type": "tip", "n": 4, "icon": "nose", "voice": "Y si notas la nariz algo cerrada, AirNaze se pega por fuera y ayuda a que pase el aire.",
+   "title": "¿Nariz algo cerrada?", "sub": "AirNaze se pega por fuera de la nariz"},
+  {"type": "brand", "voice": "Guárdalo para esta noche. Y cuéntame: ¿duermes con la calefacción puesta?",
+   "big": "Guárdalo para esta noche", "small": "¿Duermes con la calefacción puesta?"}
+ ]
+}
