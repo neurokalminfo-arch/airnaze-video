@@ -1,0 +1,30 @@
+{
+ "slot": "pm",
+ "pillar": "entrenamiento",
+ "topic": "Recuperar tras entrenar: vuelta a la calma de 2 minutos (caminar suave, respirar lento por la nariz, agua y estiramientos) en vez de parar en seco",
+ "publish_at": "2026-11-14T19:00:00",
+ "stage": "atraer",
+ "series": "entrena-con-la-nariz",
+ "hook_type": "mito",
+ "cta": "guardar",
+ "caption": "Acabar el entreno y tirarte al sofá de golpe no es la mejor forma de recuperar 🏃‍♀️➡️🛋️\n\nPrueba esta vuelta a la calma de 2 minutos:\n1️⃣ Camina suave mientras baja el pulso\n2️⃣ Respira lento por la nariz, soltando el aire más largo\n3️⃣ Agua y estira lo que más hayas trabajado\n\nGuárdalo para tu próximo entreno y cuéntame: ¿qué haces nada más terminar? 👇",
+ "hashtags": ["#entrenamiento", "#recuperacion", "#vueltaalacalma", "#respiracionnasal", "#running", "#gym", "#airnaze"],
+ "tiktok_title": "Parar en seco no es recuperar",
+ "music_seed": 7,
+ "scenes": [
+  {"type": "hook", "voice": "Acabar el entreno y tirarte al sofá de golpe no es la mejor forma de recuperar.",
+   "big": "Parar en seco no es recuperar", "small": "Mito del post-entreno", "accent": ["recuperar"]},
+  {"type": "versus", "voice": "Mejor dos minutos de vuelta a la calma que parar en seco.",
+   "left": "Parar", "lsub": "en seco al sofá", "right": "Calma", "rsub": "2 minutos suaves"},
+  {"type": "tip", "n": 1, "icon": "run", "voice": "Uno: camina suave mientras baja el pulso.",
+   "title": "Camina suave", "sub": "Deja que el pulso baje poco a poco"},
+  {"type": "breath", "voice": "Dos: respira lento por la nariz, soltando el aire más largo de lo que lo coges.",
+   "big": "Suelta el aire más largo"},
+  {"type": "tip", "n": 3, "icon": "drop", "voice": "Tres: bebe agua y estira lo que más hayas trabajado.",
+   "title": "Agua y estiramientos", "sub": "Lo que más hayas trabajado"},
+  {"type": "tip", "n": 4, "icon": "nose", "voice": "Y si entrenas con AirNaze, se pega por fuera de la nariz y aguanta el sudor.",
+   "title": "Entrena con AirNaze", "sub": "Por fuera de la nariz y aguanta el sudor"},
+  {"type": "brand", "voice": "Guárdalo para tu próximo entreno. Y cuéntame: ¿qué haces nada más terminar?",
+   "big": "Guárdalo para tu próximo entreno", "small": "¿Qué haces nada más terminar?"}
+ ]
+}
