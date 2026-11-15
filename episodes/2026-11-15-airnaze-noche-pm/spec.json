@@ -1,0 +1,28 @@
+{
+ "slot": "pm",
+ "pillar": "descanso",
+ "topic": "Preparar la noche con AirNaze: ventilar el cuarto, respirar lento por la nariz y ponerlo antes de dormir (nariz limpia y seca, pads por fuera, arco, nivel suave)",
+ "publish_at": "2026-11-15T19:00:00",
+ "stage": "convertir",
+ "series": "tu-noche-mejor",
+ "hook_type": "historia",
+ "cta": "perfil",
+ "caption": "Apagas la luz y notas la nariz algo cerrada 😮‍💨🌙\n\nTu ritual de antes de dormir:\n1️⃣ Ventila el cuarto 5 minutos\n2️⃣ Tres respiraciones lentas por la nariz\n3️⃣ Nariz limpia y seca, pads de AirNaze por fuera y conectas el arco\n\nLa primera noche, empieza por el nivel más suave. Sin pastillas ni sprays.\nEl Pack de Bienvenida da para 15 días, con envío gratis y 30 días de devolución. Lo tienes en el enlace del perfil 🔗\n\nGuárdalo para esta noche y cuéntame: ¿cómo te has levantado? 👇",
+ "hashtags": ["#dormirmejor", "#rutinadenoche", "#respiracionnasal", "#descanso", "#habitossaludables", "#airnaze"],
+ "tiktok_title": "Mi ritual para respirar mejor de noche",
+ "music_seed": 12,
+ "scenes": [
+  {"type": "hook", "voice": "Son las once, apagas la luz y notas la nariz algo cerrada. Prueba esto antes de dormir.",
+   "big": "¿Nariz cerrada al apagar la luz?", "small": "Tu noche, mejor", "accent": ["nariz"]},
+  {"type": "tip", "n": 1, "icon": "window", "voice": "Uno: ventila el cuarto cinco minutos antes de acostarte.",
+   "title": "Ventila el cuarto", "sub": "5 minutos antes de acostarte"},
+  {"type": "breath", "voice": "Dos: tres respiraciones lentas por la nariz, soltando el aire despacio.",
+   "big": "Inspira por la nariz, suelta despacio"},
+  {"type": "tip", "n": 3, "icon": "nose", "voice": "Tres: con la nariz limpia y seca, pega los pads de AirNaze por fuera y conecta el arco.",
+   "title": "Pads por fuera + arco", "sub": "Con la nariz limpia y seca"},
+  {"type": "versus", "voice": "La primera noche, empieza por el nivel más suave. Cómodo, discreto y sin sprays.",
+   "left": "Suave", "lsub": "nivel para empezar", "right": "Discreto", "rsub": "sin sprays ni pastillas"},
+  {"type": "brand", "voice": "Lo tienes en el enlace del perfil. Guárdalo para esta noche y cuéntame: ¿cómo te has levantado?",
+   "big": "Guárdalo para esta noche", "small": "AirNaze en el enlace del perfil"}
+ ]
+}
