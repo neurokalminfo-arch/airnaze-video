@@ -1,0 +1,77 @@
+{
+ "slot": "pm",
+ "pillar": "habitos",
+ "topic": "Desconectar del trabajo al llegar a casa: ritual de 3 pasos (cambiarse de ropa, 5 respiraciones lentas por la nariz, luz baja y móvil lejos)",
+ "publish_at": "2026-11-16T19:00:00",
+ "stage": "atraer",
+ "series": "tu-noche-mejor",
+ "hook_type": "pregunta",
+ "cta": "comentar",
+ "caption": "¿Llegas a casa y la cabeza sigue en el trabajo? 💻🏠\n\nPrueba este ritual de 3 pasos nada más cruzar la puerta:\n1️⃣ Cámbiate de ropa: el trabajo se queda fuera\n2️⃣ 5 respiraciones lentas por la nariz, soltando el aire despacio\n3️⃣ Luz baja y el móvil en otra habitación un rato\n\nGuárdalo para hoy y cuéntame: ¿qué es lo primero que haces al llegar a casa? 👇",
+ "hashtags": [
+  "#desconectar",
+  "#estres",
+  "#rutinadenoche",
+  "#respiracionnasal",
+  "#bienestar",
+  "#habitos",
+  "#airnaze"
+ ],
+ "tiktok_title": "Llegas a casa y sigues en modo trabajo",
+ "music_seed": 13,
+ "scenes": [
+  {
+   "type": "hook",
+   "voice": "¿Llegas a casa y la cabeza sigue en el trabajo? Prueba esto.",
+   "big": "¿Llegas a casa y sigues en modo trabajo?",
+   "small": "Tu noche, mejor",
+   "accent": [
+    "modo",
+    "trabajo?"
+   ]
+  },
+  {
+   "type": "versus",
+   "voice": "El sofá con el móvil no desconecta. Un ritual corto te ayuda a cerrar el día.",
+   "left": "Sofá",
+   "lsub": "con el móvil",
+   "right": "Ritual",
+   "rsub": "corto y cierras el día"
+  },
+  {
+   "type": "tip",
+   "n": 1,
+   "icon": "check",
+   "voice": "Uno: cámbiate de ropa al llegar. El trabajo se queda fuera.",
+   "title": "Cámbiate de ropa",
+   "sub": "El trabajo se queda fuera"
+  },
+  {
+   "type": "breath",
+   "voice": "Dos: cinco respiraciones lentas por la nariz, soltando el aire despacio.",
+   "big": "Cinco respiraciones por la nariz"
+  },
+  {
+   "type": "tip",
+   "n": 3,
+   "icon": "moon",
+   "voice": "Tres: luz baja y el móvil en otra habitación un rato.",
+   "title": "Luz baja, móvil lejos",
+   "sub": "Aunque sea media hora"
+  },
+  {
+   "type": "tip",
+   "n": 4,
+   "icon": "nose",
+   "voice": "Y si notas la nariz algo cerrada, AirNaze se pega por fuera y ayuda a que el aire pase más fácil.",
+   "title": "AirNaze, por fuera",
+   "sub": "Para que el aire pase más fácil"
+  },
+  {
+   "type": "brand",
+   "voice": "Cuéntame: ¿qué es lo primero que haces al llegar a casa?",
+   "big": "¿Qué haces nada más llegar?",
+   "small": "Cuéntamelo en comentarios"
+  }
+ ]
+}
