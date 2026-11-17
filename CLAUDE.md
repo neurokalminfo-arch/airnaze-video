@@ -7,8 +7,8 @@ Hay dos ejecuciones al día: slot `am` = **10:00** y slot `pm` = **19:00** (hora
 1. `bash engine/setup.sh` (voz Piper en español + dependencias; tarda ~1 min la primera vez).
 2. Lee **`ESTRATEGIA.md`** (embudo, series, calendario semanal) y **`aprendizajes.md`** (lo que dicen los datos; manda sobre el calendario base). Haz lo que toque hoy según el día de la semana y el slot; si hay una promesa de CTA pendiente, prioriza cumplirla.
 3. Lee los temas ya usados: `grep -h '"topic"\|"stage"\|"hook_type"' episodes/*/spec.json`. No repitas tema ni gancho de los últimos 30 días. Escribe `episodes/AAAA-MM-DD-<tema-corto>-<slot>/spec.json` con todas las etiquetas (`stage`, `series`, `hook_type`, `cta`, `pillar`). Si el CTA promete un vídeo, apúntalo en "Promesas pendientes" de `aprendizajes.md` (y bórralo de ahí cuando lo cumplas).
-4. `python3 engine/render.py episodes/<id>/spec.json episodes/<id>/final.mp4 --frames` y **mira los fotogramas** (`episodes/<id>/final_work/preview_*.jpg`; haz una hoja de contacto): texto completo, nada cortado ni solapado. Corrige y repite. Después, sin `--frames`, el render completo (~1 min).
-5. Comprueba la duración con ffprobe (25–35 s ideal, máx. 40 s; si se pasa, recorta voz y vuelve a renderizar). Borra `final_work/`, luego `git add -A && git commit && git push origin main`. URL pública:
+4. Sigue **`skills/airnaze-reels-collage/SKILL.md`** (estilo visual "kinetic + collage", estructura de 6–8 escenas). `python3 engine/render_v2.py episodes/<id>/spec.json episodes/<id>/final.mp4 --frames` y **mira la hoja de contacto** `episodes/<id>/final_work/contact.jpg`: texto completo, nada cortado ni solapado, el texto grande no pisa los subtítulos. Corrige y repite. Después, sin `--frames`, el render completo (~1 min).
+5. Comprueba la duración con ffprobe (30–42 s ideal, máx. 45 s; si se pasa, recorta voz y vuelve a renderizar). Borra `final_work/`, luego `git add -A && git commit && git push origin main`. URL pública:
    `https://raw.githubusercontent.com/neurokalminfo-arch/airnaze-video/main/episodes/<id>/final.mp4` (comprueba con curl que da 200; puede tardar unos segundos tras el push).
 6. Programa en Metricool (`createScheduledPost`, `draft: false`, `autoPublish: true`, zona `Europe/Madrid`):
    - blogId **7796113** (marca Airnaze) · providers `[instagram, tiktok]` · `instagramData: {type: REEL, showReelOnFeed: true}` · `tiktokData: {title: tiktok_title, privacyOption: PUBLIC_TO_EVERYONE}` · texto = caption + hashtags.
@@ -55,18 +55,22 @@ Idea: respirar mejor, descansar mejor, entrenar mejor, vivir mejor. AirNaze es u
  "music_seed": 1,
  "scenes":[ ... ]}
 ```
-- 5–7 escenas, **350–480 caracteres de voz** en total. Cambia `music_seed` (0–20) en cada vídeo.
-- Tipos de escena (`type`), alterna: no más de 2 `tip` seguidos.
-  - `hook`: `big` (pregunta o frase corta), `small`, `accent` [palabras en color menta]. Siempre la primera.
-  - `tip`: `n`, `title`, `sub`, `icon`.
+- 6–8 escenas, **420–560 caracteres de voz** en total. Cambia `music_seed` (0–20) en cada vídeo. Estructura y reglas visuales: `skills/airnaze-reels-collage/SKILL.md`.
+- Tipos de escena (`type`); nunca el mismo tipo dos veces seguidas:
+  - `slam`: `big` (3–6 palabras), `accent` [palabras clave], `kicker` (etiqueta en cinta). Siempre la primera.
   - `stat`: `value` (p. ej. "20.000"), `label`. Solo datos ciertos.
-  - `versus`: `left`, `lsub`, `right`, `rsub` (comparación corta).
-  - `breath`: `big` (círculo que respira 5 s: ideal para mini retos de respiración).
-  - `brand`: `big`, `small` (cierre con CTA). Siempre la última.
-  - `product`: `img` (nombre de archivo en `assets/product/`), `tag` (p. ej. "AirNaze"), `items` (2–3 rasgos reales, cortos). Foto con zoom lento y rasgos en chips.
+  - `cutout`: `word` (≤ 8 letras, en letras recortadas), `sub` (frase corta a rotulador).
+  - `triple`: `items` [{`word`, `icon`}] ×2–3, palabras ≤ 9 letras.
+  - `step`: `n`, `title`, `sub`, `icon`.
+  - `split`: `left`, `lsub`, `right`, `rsub` (mal con X vs bien con ✓; palabras cortas).
+  - `breath`: `big` (discos que respiran 5 s: mini retos de respiración).
+  - `product`: `img` (archivo en `assets/product/`), `tag`, `items` (2–3 rasgos reales). Sin foto: sticker + "AIRNAZE" recortado. Siempre la penúltima.
+  - `close`: `big` (pregunta CTA, ≤ 4 palabras), `small`. Siempre la última.
+  - Opcional: `theme` (blue|cream|navy|mint). Los tipos v1 (`hook`, `tip`, `versus`, `brand`) siguen funcionando.
 - `voice` en cada escena: lo que dice la voz (también salen como subtítulos).
 - Iconos: drop, moon, bed, wind, window, clock, run, leaf, phone, sun, nose, check.
 
 ## Motor
-- `engine/render.py`: voz Piper (es_ES davefx), animación dibujada con Pillow por escena, transiciones variadas, subtítulos, música original sintetizada con la voz por encima (-14 LUFS).
+- `engine/render_v2.py` (el que se usa): estilo "kinetic + collage": papel rasgado, cinta, riso, garabatos a 12 fps, tipografía a golpes, cortes en el beat (112 bpm), subtítulos karaoke, música + SFX sintetizados, voz Piper (es_ES davefx), -14 LUFS. Fuentes OFL en `assets/fonts/`.
+- `engine/render.py`: motor antiguo (v1), solo de respaldo si v2 falla.
 - Nunca subas claves a este repositorio (es público).

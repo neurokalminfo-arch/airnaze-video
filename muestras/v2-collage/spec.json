@@ -1,0 +1,27 @@
+{
+ "slot": "am", "pillar": "respiracion",
+ "topic": "MUESTRA v2: 20.000 respiraciones al día; la nariz filtra, calienta y humedece; reto 60 s solo nariz",
+ "stage": "atraer", "series": "reto-60s", "hook_type": "dato", "cta": "comentar",
+ "caption": "Hoy vas a respirar unas 20.000 veces. ¿Por dónde? 👃\n\nTu nariz filtra, calienta y humedece el aire antes de que llegue a los pulmones. Por la boca, te saltas ese filtro.\n\nReto: 60 segundos solo por la nariz, lento. Hazlo ahora y cuéntame cuánto has aguantado 👇",
+ "hashtags": ["#respiracionnasal", "#respirarmejor", "#reto60s", "#bienestar", "#airnaze"],
+ "tiktok_title": "20.000 veces al día. ¿Por dónde?",
+ "music_seed": 5,
+ "scenes": [
+  {"type": "slam", "voice": "Hoy vas a respirar unas veinte mil veces. ¿Por dónde lo haces?",
+   "big": "¿Por dónde respiras hoy?", "accent": ["dónde"], "kicker": "Dato del día"},
+  {"type": "stat", "voice": "Veinte mil respiraciones al día. Y casi ninguna la notas.",
+   "value": "20.000", "label": "respiraciones al día"},
+  {"type": "cutout", "voice": "Y tu nariz no es solo un agujero: es un filtro.",
+   "word": "Filtro", "sub": "tu nariz trabaja por ti"},
+  {"type": "triple", "voice": "Filtra, calienta y humedece el aire antes de que llegue a los pulmones.",
+   "items": [{"word": "Filtra", "icon": "wind"}, {"word": "Calienta", "icon": "sun"}, {"word": "Humedece", "icon": "drop"}]},
+  {"type": "split", "voice": "Por la boca, te saltas ese filtro. Por la nariz, el aire llega preparado.",
+   "left": "Boca", "lsub": "te saltas el filtro", "right": "Nariz", "rsub": "llega preparado"},
+  {"type": "breath", "voice": "Reto: cierra la boca y respira solo por la nariz durante un minuto. Lento.",
+   "big": "60 s solo nariz"},
+  {"type": "product", "voice": "Y si notas la nariz algo cerrada, AirNaze se pega por fuera y ayuda a que el aire pase más fácil.",
+   "tag": "AirNaze", "items": ["Por fuera de la nariz", "Sin pastillas ni sprays", "Discreto"]},
+  {"type": "close", "voice": "Hazlo ahora y cuéntame: ¿cuánto has aguantado?",
+   "big": "¿Cuánto has aguantado?", "small": "te leo aquí"}
+ ]
+}
