@@ -1,0 +1,26 @@
+{
+ "slot": "pm", "pillar": "respiracion",
+ "topic": "Bajar revoluciones antes de dormir soltando el aire más despacio de lo que entra: reto 60 s de 4 dentro y 6 fuera por la nariz",
+ "publish_at": "2026-11-17T19:00:00",
+ "stage": "conectar", "series": "reto-60s", "hook_type": "reto", "cta": "comentar",
+ "caption": "Reto de esta noche: 60 segundos para bajar revoluciones 🌙👃\n\nCasi siempre cogemos aire rápido y lo soltamos igual de rápido. Hoy, al revés:\n➡️ Coge aire por la nariz contando 4\n⬅️ Suéltalo por la nariz contando 6\n🔁 Hombros sueltos, boca cerrada, durante un minuto\n\nGuárdalo para antes de acostarte y cuéntame: ¿cómo te has quedado? 👇",
+ "hashtags": ["#reto60s", "#respiracionnasal", "#dormirmejor", "#rutinadenoche", "#desconectar", "#bienestar", "#airnaze"],
+ "tiktok_title": "60 segundos para frenar el día",
+ "music_seed": 9,
+ "scenes": [
+  {"type": "slam", "voice": "Te reto: un minuto para bajar revoluciones antes de dormir. Solo con tu nariz.",
+   "big": "60 s para frenar el día", "accent": ["frenar"], "kicker": "Reto 60 s"},
+  {"type": "split", "voice": "Casi siempre cogemos aire rápido y lo soltamos igual de rápido. Hoy, al revés.",
+   "left": "Rápido", "lsub": "entra y sale igual", "right": "Lento", "rsub": "sale más largo"},
+  {"type": "cutout", "voice": "La clave está en soltar: que el aire salga más despacio de lo que entra.",
+   "word": "Soltar", "sub": "sin prisa al sacar el aire"},
+  {"type": "step", "n": 1, "icon": "nose", "voice": "Coge aire por la nariz contando cuatro. Suéltalo por la nariz contando seis.",
+   "title": "4 dentro, 6 fuera", "sub": "todo por la nariz"},
+  {"type": "breath", "voice": "Ahora tú. Hombros sueltos, boca cerrada, y repite así durante un minuto.",
+   "big": "60 s sin prisa"},
+  {"type": "product", "voice": "Y si notas la nariz algo cerrada al acostarte, AirNaze se pega por fuera y ayuda a que el aire pase más fácil.",
+   "tag": "AirNaze", "items": ["Por fuera de la nariz", "Sin pastillas ni sprays", "Nivel suave para empezar"]},
+  {"type": "close", "voice": "Hazlo ahora y cuéntame: ¿cómo te has quedado?",
+   "big": "¿Cómo te has quedado?", "small": "te leo aquí"}
+ ]
+}
