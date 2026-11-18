@@ -1,0 +1,80 @@
+{
+ "slot": "pm",
+ "pillar": "descanso",
+ "topic": "Acostarte y levantarte a horas parecidas cada día (también el finde): el cuerpo se acostumbra a un ritmo y coger el sueño cuesta menos",
+ "publish_at": "2026-11-18T19:00:00",
+ "stage": "atraer",
+ "series": "tu-noche-mejor",
+ "hook_type": "error",
+ "cta": "guardar",
+ "caption": "¿Cada noche te acuestas a una hora distinta? 🌙⏰\n\nTu cuerpo funciona mejor con ritmo. Prueba esto:\n⏰ Elige una hora para levantarte y mantenla, también el finde\n🔔 Pon una alarma para empezar a ir a la cama, no solo para despertarte\n💡 Luz baja y respiración lenta por la nariz antes de acostarte\n\nGuárdalo y empieza esta noche. ¿A qué hora te sueles acostar? 👇",
+ "hashtags": [
+  "#dormirmejor",
+  "#rutinadenoche",
+  "#descanso",
+  "#habitos",
+  "#respiracionnasal",
+  "#bienestar",
+  "#airnaze"
+ ],
+ "tiktok_title": "El error de acostarte cada día a una hora",
+ "music_seed": 4,
+ "scenes": [
+  {
+   "type": "slam",
+   "voice": "Error típico: cada noche te acuestas a una hora distinta. Y luego cuesta dormirse.",
+   "big": "Cada noche, otra hora",
+   "accent": [
+    "otra",
+    "hora"
+   ],
+   "kicker": "Tu noche, mejor"
+  },
+  {
+   "type": "split",
+   "voice": "Un día a las doce, otro a las dos. Tu cuerpo no sabe cuándo toca descansar.",
+   "left": "Caos",
+   "lsub": "cada día distinto",
+   "right": "Rutina",
+   "rsub": "horas parecidas"
+  },
+  {
+   "type": "cutout",
+   "voice": "La clave es el ritmo: el cuerpo se acostumbra a una rutina.",
+   "word": "Ritmo",
+   "sub": "tu cuerpo aprende la hora"
+  },
+  {
+   "type": "step",
+   "n": 1,
+   "icon": "sun",
+   "voice": "Uno: elige una hora para levantarte y mantenla, también el finde.",
+   "title": "Levántate a tu hora",
+   "sub": "también el finde"
+  },
+  {
+   "type": "step",
+   "n": 2,
+   "icon": "clock",
+   "voice": "Dos: pon una alarma para empezar a ir a la cama, no solo para despertarte.",
+   "title": "Alarma para acostarte",
+   "sub": "no solo para despertar",
+   "theme": "navy"
+  },
+  {
+   "type": "product",
+   "voice": "Antes de acostarte, luz baja y respira lento por la nariz. Si la notas algo cerrada, AirNaze se pega por fuera y ayuda a que el aire pase más fácil.",
+   "tag": "AirNaze",
+   "items": [
+    "Por fuera de la nariz",
+    "Nivel suave para empezar"
+   ]
+  },
+  {
+   "type": "close",
+   "voice": "Guárdalo y empieza esta noche. ¿A qué hora te sueles acostar?",
+   "big": "¿A qué hora te acuestas?",
+   "small": "guárdalo para esta noche"
+  }
+ ]
+}
