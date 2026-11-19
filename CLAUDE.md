@@ -1,14 +1,15 @@
 # Fábrica diaria de vídeos AirNaze
 
-Cada ejecución crea **1 vídeo corto** (1080x1920, 25–35 s, voz + música) y lo deja programado en Metricool para Instagram (@myairnaze, Reel) y TikTok (@myairnaze).
+Cada ejecución crea **1 vídeo corto** (1080x1920, 35–46 s, voz + música) con el estilo **noche neón** y lo deja programado en Metricool para Instagram (@myairnaze, Reel) y TikTok (@myairnaze).
 Hay dos ejecuciones al día: slot `am` = **10:00** y slot `pm` = **19:00** (hora de Madrid). Se publica sin revisión previa.
 
 ## Pasos de cada ejecución
-1. `bash engine/setup.sh` (voz Piper en español + dependencias; tarda ~1 min la primera vez).
+1. `bash engine/neon/setup.sh` (dependencias + fuente Inter). La voz es la de **Carlos en ElevenLabs**: la clave llega en el prompt de la tarea y se usa SOLO como variable de entorno `ELEVENLABS_API_KEY` (nunca en archivos: el repo es público).
 2. Lee **`ESTRATEGIA.md`** (embudo, series, calendario semanal) y **`aprendizajes.md`** (lo que dicen los datos; manda sobre el calendario base). Haz lo que toque hoy según el día de la semana y el slot; si hay una promesa de CTA pendiente, prioriza cumplirla.
 3. Lee los temas ya usados: `grep -h '"topic"\|"stage"\|"hook_type"' episodes/*/spec.json`. No repitas tema ni gancho de los últimos 30 días. Escribe `episodes/AAAA-MM-DD-<tema-corto>-<slot>/spec.json` con todas las etiquetas (`stage`, `series`, `hook_type`, `cta`, `pillar`). Si el CTA promete un vídeo, apúntalo en "Promesas pendientes" de `aprendizajes.md` (y bórralo de ahí cuando lo cumplas).
-4. Sigue **`skills/airnaze-reels-collage/SKILL.md`** (estilo visual "kinetic + collage", estructura de 6–8 escenas). `python3 engine/render_v2.py episodes/<id>/spec.json episodes/<id>/final.mp4 --frames` y **mira la hoja de contacto** `episodes/<id>/final_work/contact.jpg`: texto completo, nada cortado ni solapado, el texto grande no pisa los subtítulos. Corrige y repite. Después, sin `--frames`, el render completo (~1 min).
-5. Comprueba la duración con ffprobe (30–42 s ideal, máx. 45 s; si se pasa, recorta voz y vuelve a renderizar). Borra `final_work/`, luego `git add -A && git commit && git push origin main`. URL pública:
+4. Sigue **`skills/airnaze-noche-neon/SKILL.md`** y el ejemplo `muestras/neon-ciclo-nasal/`. Escribe el guion en `spec.json` (`voice`, `style: "noche-neon"`), genera la voz (`python3 engine/neon/tts.py episodes/<id>`), escribe `episodes/<id>/scenes.py`, y `python3 engine/neon/render.py episodes/<id> --frames`: **mira la hoja de contacto** `episodes/<id>/final_work/contact.jpg` (texto completo, nada cortado ni solapado, ninguna escena vacía). Corrige y repite. Después, sin `--frames`, el render completo (~1,5 min).
+   Si ElevenLabs falla tras reintentar unos minutos, usa como respaldo el motor anterior (`bash engine/setup.sh` + `engine/render_v2.py`, estilo collage con voz Piper) y dilo en el resumen.
+5. Comprueba la duración con ffprobe (35–46 s ideal, máx. 48 s; si se pasa, recorta el guion, regenera la voz y vuelve a renderizar). Borra `final_work/`, luego `git add -A && git commit && git push origin main`. URL pública:
    `https://raw.githubusercontent.com/neurokalminfo-arch/airnaze-video/main/episodes/<id>/final.mp4` (comprueba con curl que da 200; puede tardar unos segundos tras el push).
 6. Programa en Metricool (`createScheduledPost`, `draft: false`, `autoPublish: true`, zona `Europe/Madrid`):
    - blogId **7796113** (marca Airnaze) · providers `[instagram, tiktok]` · `instagramData: {type: REEL, showReelOnFeed: true}` · `tiktokData: {title: tiktok_title, privacyOption: PUBLIC_TO_EVERYONE}` · texto = caption + hashtags.
@@ -47,6 +48,8 @@ Idea: respirar mejor, descansar mejor, entrenar mejor, vivir mejor. AirNaze es u
 - CTA: guardar o comentar algo concreto ("cuéntame: ¿duermes con la boca abierta?"). Nunca "compra ya".
 
 ## Formato de spec.json
+Estilo **noche neón** (el actual): las etiquetas de abajo + `"style": "noche-neon"`, `"voice"` (guion completo, 560–760 caracteres) y `music_seed`. Las escenas NO van en spec.json sino en `episodes/<id>/scenes.py` (ver la skill). El formato de `scenes` de abajo es el del motor collage (respaldo).
+
 ```json
 {"slot":"am|pm","pillar":"descanso|respiracion|entrenamiento|habitos","topic":"...","publish_at":"AAAA-MM-DDTHH:MM:SS",
  "stage":"atraer|conectar|convertir","series":"mito-o-verdad|reto-60s|tu-noche-mejor|entrena-con-la-nariz|me-preguntasteis|asi-se-usa|ninguna",
@@ -71,6 +74,7 @@ Idea: respirar mejor, descansar mejor, entrenar mejor, vivir mejor. AirNaze es u
 - Iconos: drop, moon, bed, wind, window, clock, run, leaf, phone, sun, nose, check.
 
 ## Motor
-- `engine/render_v2.py` (el que se usa): estilo "kinetic + collage": papel rasgado, cinta, riso, garabatos a 12 fps, tipografía a golpes, cortes en el beat (112 bpm), subtítulos karaoke, música + SFX sintetizados, voz Piper (es_ES davefx), -14 LUFS. Fuentes OFL en `assets/fonts/`.
+- `engine/neon/` (el que se usa desde el 19-11-2026): estilo "noche neón" dibujado con código (pycairo + glow), subtítulos karaoke arriba, voz Carlos (ElevenLabs), música y efectos sintetizados, -14 LUFS. Skill: `skills/airnaze-noche-neon/SKILL.md`.
+- `engine/render_v2.py` (respaldo si falla ElevenLabs): estilo "kinetic + collage": papel rasgado, cinta, riso, garabatos a 12 fps, tipografía a golpes, cortes en el beat (112 bpm), subtítulos karaoke, música + SFX sintetizados, voz Piper (es_ES davefx), -14 LUFS. Fuentes OFL en `assets/fonts/`.
 - `engine/render.py`: motor antiguo (v1), solo de respaldo si v2 falla.
 - Nunca subas claves a este repositorio (es público).
