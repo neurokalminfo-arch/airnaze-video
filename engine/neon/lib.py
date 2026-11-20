@@ -466,3 +466,111 @@ def close_cta(F, t, t0, question, t_arrow, scene_draw=None):
             e = c.text_extents(ln); c.set_source_rgb(1, 1, 1); c.move_to(-e.x_advance / 2, i * (size + 14)); c.show_text(ln)
         c.restore()
     comment_arrow(F.o, t, t_arrow)
+
+
+# ---------------- añadidas 20-11-2026: torso en holograma y cuentarrevoluciones ----------------
+def holo_torso(F, t, cx=540, cy=1000, s=1.0, chest=0.0, belly=0.0, shoulders=0.0, dia=0.0,
+               hand=0.0, tint=None, desk=0.0, lamp=0.0, x_sh=0.0, ok_hand=0.0):
+    """Busto en holograma de perfil frontal: pulmones (se llenan con `chest`), diafragma (baja con `belly`,
+    brilla con `dia`), barriga que se abomba (`belly`), hombros que suben (`shoulders`), mano en la barriga (`hand`).
+    `tint` colorea el contorno (CYAN tranquilo, RED estrés). `desk`: mesa con portátil delante; `lamp`: luz cálida de casa."""
+    c, g = F.b, F.g
+    col = tint or CYAN
+    if lamp > 0:
+        c.set_source(rad(860, 520, 20, 700, [(0, (1, 0.72, 0.38, 0.45 * lamp)), (1, (1, 0.6, 0.3, 0))])); c.paint()
+        g.set_source_rgba(*GOLD, 0.9 * lamp); ell(g, 860, 520, 46, 46); g.fill()
+        g.set_source_rgba(*GOLD, 0.6 * lamp); g.set_line_width(4); g.move_to(860, 300); g.line_to(860, 474); g.stroke()
+    for cc in (c, g):
+        cc.save(); cc.translate(cx, cy); cc.scale(s, s)
+    c.set_source(rad(0, -60, 40, 620, [(0, (*col, 0.20)), (1, (*col, 0))])); c.arc(0, -60, 620, 0, 6.3); c.fill()
+    sh = -40 * shoulders
+    bl = 70 * belly
+    # head + neck
+    g.set_source_rgba(*col, 0.95); g.set_line_width(5)
+    ell(g, 0, -560 + sh * 0.5, 105, 125); g.stroke()
+    def body(cc):
+        cc.move_to(-55, -435 + sh * 0.5); cc.line_to(-60, -380 + sh)
+        cc.curve_to(-170, -365 + sh, -290, -350 + sh, -300, -260 + sh)
+        cc.curve_to(-305, -120, -250, 60, -240, 200)
+        cc.curve_to(-235 - bl * 0.4, 330, -220 - bl, 420, -210, 520)
+        cc.line_to(210, 520)
+        cc.curve_to(220 + bl, 420, 235 + bl * 0.4, 330, 240, 200)
+        cc.curve_to(250, 60, 305, -120, 300, -260 + sh)
+        cc.curve_to(290, -350 + sh, 170, -365 + sh, 60, -380 + sh); cc.line_to(55, -435 + sh * 0.5)
+    c.set_source_rgba(0.5, 0.35, 0.85, 0.16); body(c); c.close_path(); c.fill()
+    g.set_source_rgba(*col, 0.95); g.set_line_width(5); g.set_line_join(1); body(g); g.stroke()
+    # lungs
+    k = 0.82 + 0.22 * chest
+    for side in (-1, 1):
+        g.save(); g.translate(side * 115, -120 + sh * 0.6); g.scale(k, k)
+        g.move_to(side * -40, -170); g.curve_to(side * 90, -190, side * 120, -20, side * 110, 120)
+        g.curve_to(side * 100, 170, side * -10, 175, side * -50, 140); g.curve_to(side * -70, 40, side * -60, -100, side * -40, -170)
+        g.set_source_rgba(*mix(col, PINK, 0.35), 0.18 + 0.25 * chest); g.fill_preserve()
+        g.set_source_rgba(*mix(col, (1, 1, 1), 0.2), 0.85); g.set_line_width(4); g.stroke()
+        g.restore()
+    # diaphragm dome
+    dy = 40 + 55 * belly
+    dc = mix(col, GRN, clamp(dia))
+    for lw, a in ((14, 0.35 + 0.4 * dia), (5, 1)):
+        g.set_source_rgba(*dc, a); g.set_line_width(lw); g.set_line_cap(1)
+        g.move_to(-235, 95 + dy); g.curve_to(-160, -10 + dy * 0.6, 160, -10 + dy * 0.6, 235, 95 + dy); g.stroke()
+    # belly air dots
+    if belly > 0.05:
+        r = random.Random(3)
+        for i in range(14):
+            x = r.uniform(-150, 150); y = r.uniform(240, 460)
+            g.set_source_rgba(*GRN, 0.5 * belly * (0.5 + 0.5 * math.sin(t * 3 + i))); g.arc(x, y, 5, 0, 6.3); g.fill()
+    # hand on belly
+    if hand > 0:
+        hy = 360 - 30 * belly; hx = 40 + bl * 0.3
+        a = clamp(hand)
+        c.set_source_rgba(0.98, 0.78, 0.6, 0.85 * a); rrect(c, hx - 150, hy - 70, 230, 140, 60); c.fill()
+        c.set_source_rgba(0.98, 0.78, 0.6, 0.85 * a); rrect(c, hx + 40, hy - 30, 200, 70, 34); c.fill()
+        g.set_source_rgba(*GOLD, a); g.set_line_width(4)
+        rrect(g, hx - 150, hy - 70, 230, 140, 60); g.stroke()
+        for i in range(4):
+            g.move_to(hx - 120 + 50 * i, hy - 60); g.line_to(hx - 120 + 50 * i, hy - 20); g.stroke()
+        if ok_hand > 0:
+            kk = back(ok_hand); g.save(); g.translate(hx - 190, hy); g.scale(kk, kk)
+            g.set_source_rgba(*GRN, 1); g.arc(0, 0, 46, 0, 6.3); g.fill()
+            g.set_source_rgb(0.04, 0.1, 0.07); g.set_line_width(10); g.set_line_cap(1)
+            g.move_to(-20, 2); g.line_to(-5, 18); g.line_to(22, -16); g.stroke(); g.restore()
+    if x_sh > 0:
+        kk = back(x_sh)
+        for side in (-1, 1):
+            g.save(); g.translate(side * 250, -420 + sh); g.scale(kk, kk)
+            g.set_source_rgba(*RED, 1); g.arc(0, 0, 42, 0, 6.3); g.fill()
+            g.set_source_rgb(1, 1, 1); g.set_line_width(10); g.set_line_cap(1)
+            for d in (1, -1): g.move_to(-15, -15 * d); g.line_to(15, 15 * d); g.stroke()
+            g.restore()
+    for cc in (c, g): cc.restore()
+    if desk > 0:
+        a = clamp(desk)
+        c.set_source_rgba(0.18, 0.12, 0.3, 0.97 * a); c.rectangle(0, 1480, W, H - 1480); c.fill()
+        g.set_source_rgba(*GOLD, 0.7 * a); g.set_line_width(4); g.move_to(0, 1480); g.line_to(W, 1480); g.stroke()
+        c.set_source_rgba(0.12, 0.1, 0.22, a); c.move_to(300, 1480); c.line_to(780, 1480); c.line_to(740, 1270); c.line_to(340, 1270); c.close_path(); c.fill()
+        c.set_source(rad(540, 1360, 10, 380, [(0, (0.6, 0.85, 1, 0.45 * a)), (1, (0.6, 0.85, 1, 0))])); c.arc(540, 1360, 380, 0, 6.3); c.fill()
+        g.set_source_rgba(0.7, 0.9, 1, 0.9 * a); g.set_line_width(3); g.move_to(340, 1270); g.line_to(740, 1270); g.stroke()
+
+def rev_gauge(F, t, t0, val, cx=540, cy=980, R=330, label_txt=None):
+    """Cuentarrevoluciones de neón: `val` 0..1 (zona roja arriba). Metáfora de ir 'pasado de vueltas'."""
+    bg_holo(F.b, t)
+    g, o = F.g, F.o
+    k = back((t - t0) / 0.4)
+    g.save(); g.translate(cx, cy); g.scale(k, k)
+    a0, a1 = math.pi * 0.8, math.pi * 2.2
+    for i in range(40):
+        u = i / 39; a = lerp(a0, a1, u)
+        colr = mix(CYAN, RED, clamp((u - 0.45) / 0.4))
+        g.set_source_rgba(*colr, 0.9); g.set_line_width(8 if i % 5 == 0 else 4)
+        r1 = R - (48 if i % 5 == 0 else 26)
+        g.move_to(r1 * math.cos(a), r1 * math.sin(a)); g.line_to(R * math.cos(a), R * math.sin(a)); g.stroke()
+    jit = 0.02 * math.sin(t * 23) * clamp(val)
+    a = lerp(a0, a1, clamp(val + jit))
+    g.set_source_rgba(*mix(CYAN, RED, clamp(val)), 1); g.set_line_width(12); g.set_line_cap(1)
+    g.move_to(0, 0); g.line_to((R - 70) * math.cos(a), (R - 70) * math.sin(a)); g.stroke()
+    g.set_source_rgba(1, 1, 1, 0.95); g.arc(0, 0, 24, 0, 6.3); g.fill()
+    g.restore()
+    if label_txt:
+        o.select_font_face("Inter Display", 0, 1); o.set_font_size(54); e = o.text_extents(label_txt)
+        o.set_source_rgba(1, 1, 1, clamp((t - t0) / 0.3)); o.move_to(cx - e.x_advance / 2, cy + R * 0.55); o.show_text(label_txt)
