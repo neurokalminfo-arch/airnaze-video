@@ -574,3 +574,133 @@ def rev_gauge(F, t, t0, val, cx=540, cy=980, R=330, label_txt=None):
     if label_txt:
         o.select_font_face("Inter Display", 0, 1); o.set_font_size(54); e = o.text_extents(label_txt)
         o.set_source_rgba(1, 1, 1, clamp((t - t0) / 0.3)); o.move_to(cx - e.x_advance / 2, cy + R * 0.55); o.show_text(label_txt)
+
+
+# ---------------- añadidas 21-11-2026: mancuerna, pulso, ruta gimnasio→cama, ducha y piernas en la pared ----------------
+def dumbbell(g, x, y, s=1.0, ang=0.0, col=None, a=1.0):
+    """Mancuerna de neón (contorno)."""
+    col = col or PINK
+    g.save(); g.translate(x, y); g.rotate(ang); g.scale(s, s)
+    g.set_source_rgba(*col, a); g.set_line_width(7); g.set_line_join(1)
+    rrect(g, -70, -9, 140, 18, 9); g.stroke()
+    for sd in (-1, 1):
+        rrect(g, sd * 70 - (26 if sd > 0 else 0) + (0 if sd > 0 else 0), -60, 26, 120, 10); g.stroke()
+        rrect(g, sd * 104 - 13, -42, 26, 84, 10); g.stroke()
+    g.restore()
+
+def pulse_line(F, t, y=1250, rate=1.6, amp=1.0, col=None, x0=60, x1=1020, a=1.0):
+    """Línea de pulso de neón que avanza: `rate` = latidos por segundo (visual), `amp` = altura del pico."""
+    g = F.g; col = col or RED
+    pts = []
+    n = 220
+    for i in range(n + 1):
+        x = lerp(x0, x1, i / n)
+        ph = ((x - x0) / 260.0 * rate * 0.6 - t * rate) % 1.0
+        if ph < 0.06: v = -ph / 0.06 * 0.25
+        elif ph < 0.10: v = lerp(-0.25, 1.0, (ph - 0.06) / 0.04)
+        elif ph < 0.15: v = lerp(1.0, -0.55, (ph - 0.10) / 0.05)
+        elif ph < 0.20: v = lerp(-0.55, 0, (ph - 0.15) / 0.05)
+        elif 0.32 < ph < 0.42: v = 0.18 * math.sin((ph - 0.32) / 0.1 * math.pi)
+        else: v = 0
+        pts.append((x, y - v * 150 * amp))
+    for lw, aa in ((16, 0.25), (6, 1.0)):
+        g.set_source_rgba(*col, aa * a); g.set_line_width(lw); g.set_line_join(1); g.set_line_cap(1)
+        g.move_to(*pts[0])
+        for p in pts[1:]: g.line_to(*p)
+        g.stroke()
+
+def route(F, t, p, brake=0.0, y=1000):
+    """Carretera de neón del gimnasio (mancuerna) a la cama. `p` 0..1 = dónde va el punto;
+    `brake` 0..1 = tramo de frenada (de rosa a cian) antes de la cama."""
+    bg_holo(F.b, t)
+    g, c = F.g, F.b
+    xa, xb = 150, 930
+    c.set_source_rgba(0.12, 0.09, 0.3, 0.9); rrect(c, xa - 40, y - 55, xb - xa + 80, 110, 55); c.fill()
+    for i in range(14):
+        x = lerp(xa + 60, xb - 60, i / 13)
+        u = (x - xa) / (xb - xa)
+        col = mix(PINK, CYAN, clamp((u - (1 - brake * 0.55)) / 0.12)) if brake > 0 else PINK
+        g.set_source_rgba(*col, 0.8); g.set_line_width(6); g.move_to(x - 18, y); g.line_to(x + 18, y); g.stroke()
+    if brake > 0:
+        xs = lerp(xb, xa, brake * 0.55)
+        g.set_source_rgba(*CYAN, 0.9 * brake); g.set_line_width(5)
+        rrect(g, xs, y - 70, xb - xs + 30, 140, 40); g.stroke()
+    dumbbell(g, xa - 10, y - 190, 0.85, 0.0, PINK)
+    bed_icon(c, xb - 10, y - 160, 0.0, 0.95)
+    g.set_source_rgba(*GOLD, 0.8); g.set_line_width(4); g.arc(xb - 80, y - 290, 26, 0.6, 5.2); g.stroke()
+    px = lerp(xa, xb, clamp(p))
+    hot = 1 - clamp(brake * 1.2) if p > 0.75 else 1
+    col = mix(CYAN, RED, hot)
+    for k in range(6):
+        g.set_source_rgba(*col, 0.25 * (1 - k / 6)); g.arc(px - k * 34 * (1 - brake * 0.7), y, 26 - k * 2, 0, 6.3); g.fill()
+    g.set_source_rgba(*col, 1); g.arc(px, y, 30, 0, 6.3); g.fill()
+
+def shower_lamp(F, t, steam=1.0, dim=0.0):
+    """Baño de noche: ducha con vapor templado a la izquierda y lámpara que baja la luz a la derecha."""
+    c, g = F.b, F.g
+    bg_night(c)
+    warm = 1 - 0.6 * dim
+    c.set_source(rad(800, 640, 20, 760, [(0, (1, 0.72, 0.38, 0.55 * warm)), (1, (1, 0.6, 0.3, 0))])); c.paint()
+    # ducha
+    g.set_source_rgba(*CYAN, 0.95); g.set_line_width(7); g.set_line_cap(1)
+    g.move_to(180, 1500); g.line_to(180, 620); g.curve_to(180, 560, 230, 540, 300, 560); g.line_to(330, 600); g.stroke()
+    rrect(g, 280, 596, 120, 34, 14); g.stroke()
+    r = random.Random(11)
+    for i in range(36):
+        x = r.uniform(290, 395); sp = r.uniform(500, 760)
+        yy = 650 + ((t * sp + r.uniform(0, 900)) % 850)
+        g.set_source_rgba(*CYAN, 0.55); g.set_line_width(3); g.move_to(x + (yy - 650) * 0.05, yy); g.line_to(x + (yy - 650) * 0.05 + 2, yy + 22); g.stroke()
+    for i in range(9):
+        ph = (t * 0.22 + i / 9) % 1
+        x = 340 + 120 * math.sin(i * 2.1 + t * 0.7) * ph; yy = 1400 - 820 * ph
+        c.set_source_rgba(1, 0.92, 0.85, 0.22 * steam * math.sin(ph * math.pi)); c.arc(x, yy, 60 + 90 * ph, 0, 6.3); c.fill()
+    # lámpara
+    g.set_source_rgba(*GOLD, 0.7); g.set_line_width(5); g.move_to(800, 1500); g.line_to(800, 760); g.stroke()
+    g.move_to(700, 760); g.line_to(900, 760); g.line_to(850, 620); g.line_to(750, 620); g.close_path()
+    g.set_source_rgba(*GOLD, 0.25 + 0.6 * warm); g.fill_preserve(); g.set_source_rgba(*GOLD, 0.95); g.stroke()
+    c.set_source_rgba(0.14, 0.1, 0.26, 1); c.rectangle(0, 1500, W, H - 1500); c.fill()
+    g.set_source_rgba(*VIO, 0.6); g.set_line_width(3); g.move_to(0, 1500); g.line_to(W, 1500); g.stroke()
+
+def legs_wall(F, t, breath=0.0, timer=None, cx=540, floor=1330, s=1.0, nose_air=0.0, calm=0.0):
+    """Figura de neón tumbada boca arriba con las piernas apoyadas en la pared (derecha), cojín, y
+    temporizador de 60 s opcional (`timer` 0..1 transcurrido). `breath` 0..1 hincha la barriga; `nose_air` aire cian por la nariz."""
+    c, g = F.b, F.g
+    bg_night(c)
+    c.set_source(rad(260, 600, 20, 800, [(0, (1, 0.7, 0.38, 0.25)), (1, (1, 0.6, 0.3, 0))])); c.paint()
+    wx = 860
+    c.set_source(lin(wx, 0, W, 0, [(0, (0.2, 0.14, 0.38)), (1, (0.14, 0.1, 0.28))])); c.rectangle(wx, 380, W - wx, floor - 380); c.fill()
+    c.set_source_rgba(0.13, 0.09, 0.26, 1); c.rectangle(0, floor, W, H - floor); c.fill()
+    g.set_source_rgba(*VIO, 0.8); g.set_line_width(4); g.move_to(0, floor); g.line_to(wx, floor); g.line_to(wx, 380); g.stroke()
+    col = mix(PINK, CYAN, clamp(calm))
+    g.save(); g.translate(cx, floor); g.scale(s, s); g.translate(-cx, -floor)
+    # esterilla
+    c.set_source_rgba(0.3, 0.22, 0.55, 0.9); rrect(c, 70, floor - 26, 790, 26, 12); c.fill()
+    # cabeza y cuerpo tumbado
+    hy = floor - 85
+    g.set_source_rgba(*col, 0.95); g.set_line_width(7); g.set_line_cap(1); g.set_line_join(1)
+    ell(g, 170, hy, 58, 52); g.stroke()
+    bb = 16 * breath
+    g.move_to(228, hy + 10); g.curve_to(330, hy - 30, 470, hy - 44 - bb, 560, hy - 30 - bb)
+    g.curve_to(640, hy - 20, 700, hy - 10, wx - 70, hy - 4)
+    g.move_to(228, hy + 40); g.line_to(wx - 70, floor - 34); g.stroke()
+    # brazos relajados
+    g.move_to(320, hy - 10); g.curve_to(380, floor - 20, 450, floor - 22, 500, floor - 30); g.stroke()
+    # piernas en la pared
+    g.move_to(wx - 70, hy - 4); g.curve_to(wx - 30, hy - 10, wx - 30, hy - 60, wx - 36, hy - 110)
+    g.line_to(wx - 30, 520); g.move_to(wx - 70, floor - 34); g.curve_to(wx - 10, floor - 40, wx - 6, hy - 80, wx - 8, hy - 130); g.line_to(wx - 4, 520); g.stroke()
+    g.move_to(wx - 30, 520); g.line_to(wx - 70, 470); g.move_to(wx - 4, 520); g.line_to(wx - 34, 462); g.stroke()
+    # aire por la nariz
+    if nose_air > 0:
+        for i in range(4):
+            p = (t * 0.45 + i / 4) % 1
+            g.set_source_rgba(*CYAN, nose_air * math.sin(p * math.pi)); g.arc(150 - 10 * i, hy - 70 - 220 * p, 10 - 1.5 * i, 0, 6.3); g.fill()
+    g.restore()
+    if timer is not None:
+        tx, ty, R = 360, 760, 150
+        g.set_source_rgba(*VIO, 0.35); g.set_line_width(14); g.arc(tx, ty, R, 0, 6.3); g.stroke()
+        g.set_source_rgba(*GRN, 1); g.set_line_width(14); g.set_line_cap(1)
+        g.arc(tx, ty, R, -math.pi / 2, -math.pi / 2 + 2 * math.pi * clamp(timer)); g.stroke()
+        o = F.o; o.select_font_face("Inter Display", 0, 1); o.set_font_size(110)
+        txt = str(max(0, int(round(60 * (1 - clamp(timer)))))); e = o.text_extents(txt)
+        o.set_source_rgb(1, 1, 1); o.move_to(tx - e.x_advance / 2, ty + 38); o.show_text(txt)
+        o.set_font_size(34); e = o.text_extents("SEG"); o.set_source_rgba(1, 1, 1, 0.8); o.move_to(tx - e.x_advance / 2, ty + 90); o.show_text("SEG")
