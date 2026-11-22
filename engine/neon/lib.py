@@ -704,3 +704,71 @@ def legs_wall(F, t, breath=0.0, timer=None, cx=540, floor=1330, s=1.0, nose_air=
         txt = str(max(0, int(round(60 * (1 - clamp(timer)))))); e = o.text_extents(txt)
         o.set_source_rgb(1, 1, 1); o.move_to(tx - e.x_advance / 2, ty + 38); o.show_text(txt)
         o.set_font_size(34); e = o.text_extents("SEG"); o.set_source_rgba(1, 1, 1, 0.8); o.move_to(tx - e.x_advance / 2, ty + 90); o.show_text("SEG")
+
+
+def level_stairs(F, t, active=1, jump=0.0, cx=540, base=1250, s=1.0, cols=None):
+    """Escalera de neón de 3 peldaños (niveles 1·2·3). `active` = peldaño iluminado (1–3, admite decimales:
+    se mueve una bola de luz entre peldaños). `jump` > 0 dibuja un salto en arco del 1 al 3 (el error)."""
+    g, c = F.g, F.o
+    cols = cols or (GRN, GOLD, RED)
+    sw, sh = 250 * s, 170 * s
+    x0 = cx - 1.5 * sw
+    for i in range(3):
+        x = x0 + i * sw; y = base - (i + 1) * sh
+        lit = clamp(1 - abs(active - (i + 1)))
+        col = cols[i]
+        rrect(g, x + 8, y, sw - 16, (i + 1) * sh, 18)
+        g.set_source_rgba(*col, 0.10 + 0.25 * lit); g.fill_preserve()
+        g.set_source_rgba(*col, 0.45 + 0.55 * lit); g.set_line_width(5 + 4 * lit); g.stroke()
+        c.select_font_face("Inter Display", 0, 1); c.set_font_size(96 * s); e = c.text_extents(str(i + 1))
+        c.set_source_rgba(1, 1, 1, 0.55 + 0.45 * lit); c.move_to(x + sw / 2 - e.x_advance / 2, y + 120 * s); c.show_text(str(i + 1))
+    # bola de luz sobre el peldaño activo
+    k = clamp(active, 1, 3) - 1
+    bx = x0 + sw / 2 + k * sw; by = base - (k + 1) * sh - 50 * s - 10 * abs(math.sin(t * 4))
+    if jump > 0:
+        p = clamp(jump)
+        bx = lerp(x0 + sw / 2, x0 + 2.5 * sw, p); by = lerp(base - sh, base - 3 * sh, p) - 50 * s - 260 * s * math.sin(p * math.pi)
+        g.set_source_rgba(*RED, 0.6); g.set_line_width(5); g.set_dash([18, 14])
+        for i in range(41):
+            q = i / 40 * p
+            xx = lerp(x0 + sw / 2, x0 + 2.5 * sw, q); yy = lerp(base - sh, base - 3 * sh, q) - 50 * s - 260 * s * math.sin(q * math.pi)
+            (g.move_to if i == 0 else g.line_to)(xx, yy)
+        g.stroke(); g.set_dash([])
+    g.set_source(rad(bx, by, 4, 70 * s, [(0, (1, 1, 1, 1)), (0.3, (*CYAN, 0.8)), (1, (*CYAN, 0))])); g.arc(bx, by, 70 * s, 0, 6.3); g.fill()
+
+
+def checklist(F, t, items, ts, cx=540, y0=760, gap=200, col=None):
+    """Lista de pasos de neón: cada fila entra en su tiempo `ts[i]` y se marca con ✓ que se dibuja."""
+    g, c = F.g, F.o; col = col or GRN
+    for i, (txt, t0) in enumerate(zip(items, ts)):
+        if t < t0 - 0.05: 
+            rrect(g, cx - 430, y0 + i * gap - 70, 860, 140, 30); g.set_source_rgba(*VIO, 0.25); g.set_line_width(3); g.stroke(); continue
+        k = back((t - t0) / 0.35); y = y0 + i * gap
+        g.save(); g.translate(cx, y); g.scale(k, k)
+        rrect(g, -430, -70, 860, 140, 30); g.set_source_rgba(*col, 0.12); g.fill_preserve(); g.set_source_rgba(*col, 0.9); g.set_line_width(5); g.stroke()
+        g.arc(-350, 0, 44, 0, 6.3); g.set_source_rgba(*col, 0.9); g.set_line_width(5); g.stroke()
+        p = ramp(t, t0 + 0.15, t0 + 0.55)
+        if p > 0:
+            pts = [(-372, 2), (-356, 20), (-326, -18)]
+            g.set_line_width(9); g.set_line_cap(1); g.set_line_join(1); g.move_to(*pts[0])
+            if p < 0.4: g.line_to(lerp(pts[0][0], pts[1][0], p / 0.4), lerp(pts[0][1], pts[1][1], p / 0.4))
+            else: g.line_to(*pts[1]); q = (p - 0.4) / 0.6; g.line_to(lerp(pts[1][0], pts[2][0], q), lerp(pts[1][1], pts[2][1], q))
+            g.stroke()
+        g.restore()
+        c.save(); c.translate(cx, y); c.scale(k, k)
+        c.select_font_face("Inter Display", 0, 1); c.set_font_size(52); c.set_source_rgb(1, 1, 1)
+        c.move_to(-270, 18); c.show_text(txt); c.restore()
+
+
+def sneaker(g, x, y, s=1.0, col=None, a=1.0, ang=0.0):
+    """Zapatilla de neón (contorno sencillo con cordones)."""
+    col = col or CYAN
+    g.save(); g.translate(x, y); g.rotate(ang); g.scale(s, s)
+    g.set_source_rgba(*col, a); g.set_line_width(8); g.set_line_join(1); g.set_line_cap(1)
+    g.move_to(-200, 40); g.line_to(-200, -60); g.curve_to(-190, -110, -120, -110, -100, -70)
+    g.curve_to(-60, -40, 0, -30, 60, -10); g.curve_to(150, 10, 210, 20, 210, 50); g.line_to(210, 70)
+    g.line_to(-200, 70); g.close_path(); g.stroke()
+    g.move_to(-200, 40); g.line_to(210, 40); g.stroke()
+    for i in range(4):
+        xx = -80 + i * 38; g.move_to(xx, -60 + i * 9); g.line_to(xx + 26, -36 + i * 9); g.stroke()
+    g.restore()
