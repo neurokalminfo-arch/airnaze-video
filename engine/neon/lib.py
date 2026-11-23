@@ -772,3 +772,55 @@ def sneaker(g, x, y, s=1.0, col=None, a=1.0, ang=0.0):
     for i in range(4):
         xx = -80 + i * 38; g.move_to(xx, -60 + i * 9); g.line_to(xx + 26, -36 + i * 9); g.stroke()
     g.restore()
+
+# ---------------- añadidas 23-11-2026: tubo de aire en dos tomas y cierre de "guárdalo" ----------------
+def air_tube(F, t, level, marks=0.0, out=0.0, cx=540, top=560, bot=1420, wid=260):
+    """Tubo de cristal de neón que se llena de aire cian. `level` 0..1 (relleno); `marks` 0..1 muestra las
+    marcas de la 1ª toma (65 %) y la 2ª (100 %); `out` 0..1 = soplo largo saliendo por arriba (exhalación)."""
+    c, g = F.b, F.g
+    bg_holo(c, t)
+    x0 = cx - wid / 2; h = bot - top
+    c.set_source_rgba(0.08, 0.07, 0.2, 0.85); rrect(c, x0, top, wid, h, wid / 2); c.fill()
+    lv = clamp(level)
+    if lv > 0.005:
+        yl = bot - h * lv + 6 * math.sin(t * 4)
+        c.save(); rrect(c, x0 + 10, top + 10, wid - 20, h - 20, wid / 2 - 10); c.clip()
+        c.set_source(lin(0, yl, 0, bot, [(0, (0.55, 0.95, 1.0, 0.95)), (1, (0.2, 0.45, 0.95, 0.85))])); c.rectangle(x0, yl, wid, bot - yl); c.fill()
+        r = random.Random(5)
+        for i in range(14):
+            bx = x0 + 30 + r.uniform(0, wid - 60); sp = r.uniform(60, 140)
+            by = bot - ((t * sp + r.uniform(0, h)) % max(1, bot - yl))
+            c.set_source_rgba(1, 1, 1, 0.35); c.arc(bx, by, r.uniform(5, 11), 0, 6.3); c.fill()
+        c.restore()
+        g.set_source_rgba(1, 1, 1, 0.9); g.set_line_width(5); g.move_to(x0 + 18, yl); g.line_to(x0 + wid - 18, yl); g.stroke()
+    for lw, a in ((18, 0.25), (6, 0.95)):
+        g.set_source_rgba(*CYAN, a); g.set_line_width(lw); rrect(g, x0, top, wid, h, wid / 2); g.stroke()
+    if marks > 0:
+        for frac, txt, col in ((0.65, "1ª TOMA", CYAN), (0.97, "2ª TOMA", GRN)):
+            y = bot - h * frac
+            g.set_source_rgba(*col, marks); g.set_line_width(5); g.move_to(x0 + wid + 10, y); g.line_to(x0 + wid + 60, y); g.stroke()
+            c2 = F.o; c2.select_font_face("Inter Display", 0, 1); c2.set_font_size(40); c2.set_source_rgba(*col, marks)
+            c2.move_to(x0 + wid + 74, y + 14); c2.show_text(txt)
+    if out > 0:
+        for i in range(7):
+            p = (t * 0.35 + i / 7) % 1
+            x = cx + 30 * math.sin(p * 5 + i); y = top - 40 - 320 * p
+            g.set_source_rgba(*CYAN, out * 0.7 * math.sin(p * math.pi)); g.set_line_width(8); g.set_line_cap(1)
+            g.move_to(x - 70 * (1 - p * 0.4), y); g.curve_to(x - 20, y - 30, x + 20, y + 30, x + 70 * (1 - p * 0.4), y); g.stroke()
+
+def save_cta(F, t, t0, t_arrow, scene_draw=None, txt="guárdalo"):
+    """Cierre de CTA 'guardar': marcapáginas de neón que late + flecha hacia el botón de guardar (abajo derecha)."""
+    if scene_draw: scene_draw(F, t, t0)
+    else: bg_holo(F.b, t)
+    if t < t0 + 0.15: return
+    k = back((t - t0 - 0.15) / 0.4) * (1 + 0.05 * math.sin(t * 6))
+    c = F.o; c.save(); c.translate(W / 2, 860); c.scale(k, k)
+    c.set_source(rad(0, 0, 10, 330, [(0, (0.45, 0.95, 0.6, 0.35)), (1, (0.45, 0.95, 0.6, 0))])); c.arc(0, 0, 330, 0, 6.3); c.fill()
+    c.move_to(-120, -170); c.line_to(120, -170); c.line_to(120, 180); c.line_to(0, 90); c.line_to(-120, 180); c.close_path()
+    c.set_source_rgba(0.06, 0.12, 0.1, 0.9); c.fill_preserve(); c.set_source_rgb(*GRN); c.set_line_width(14); c.set_line_join(1); c.stroke()
+    c.restore()
+    if t >= t_arrow:
+        a = clamp((t - t_arrow) / 0.3); b = 18 * math.sin(t * 9)
+        arrow(c, 780 + b * 0.5, 1320 + b, 980 + b * 0.5, 1510 + b, GRN, 22, 70, a)
+        c.select_font_face("Inter Display", 0, 1); c.set_font_size(66); c.set_source_rgba(1, 1, 1, a)
+        e = c.text_extents(txt); c.move_to(560 - e.x_advance / 2, 1240); c.show_text(txt)
