@@ -824,3 +824,86 @@ def save_cta(F, t, t0, t_arrow, scene_draw=None, txt="guárdalo"):
         arrow(c, 780 + b * 0.5, 1320 + b, 980 + b * 0.5, 1510 + b, GRN, 22, 70, a)
         c.select_font_face("Inter Display", 0, 1); c.set_font_size(66); c.set_source_rgba(1, 1, 1, a)
         e = c.text_extents(txt); c.move_to(560 - e.x_advance / 2, 1240); c.show_text(txt)
+
+# ---------------- añadidas 24-11-2026: termómetro, cuerpo que suelta calor y calcetín ----------------
+def thermo(F, t, level, cx=540, top=520, bot=1380, wid=120, scale_lbl=True):
+    """Termómetro de neón. `level` 0..1: altura y color del líquido (alto = rojo/caliente, bajo = cian/fresco)."""
+    g, c = F.g, F.b
+    lv = clamp(level); col = mix(CYAN, RED, lv)
+    R = wid * 0.85; by = bot - R
+    c.set_source_rgba(0.08, 0.07, 0.2, 0.85); rrect(c, cx - wid / 2, top, wid, by - top, wid / 2); c.fill(); c.arc(cx, by, R, 0, 6.3); c.fill()
+    yl = by - (by - top - 40) * lv + 5 * math.sin(t * 3)
+    g.set_source_rgba(*col, 0.95); rrect(g, cx - wid / 2 + 22, yl, wid - 44, by - yl, (wid - 44) / 2); g.fill()
+    g.arc(cx, by, R - 22, 0, 6.3); g.fill()
+    for lw, a in ((16, 0.25), (6, 0.95)):
+        g.set_source_rgba(*col, a); g.set_line_width(lw)
+        g.new_sub_path(); g.arc(cx, by, R, -math.pi / 2 + 0.75, 1.5 * math.pi - 0.75)
+        g.line_to(cx - wid / 2, top + wid / 2); g.arc(cx, top + wid / 2, wid / 2, math.pi, 2 * math.pi); g.close_path(); g.stroke()
+    if scale_lbl:
+        for i in range(9):
+            y = top + 60 + i * (by - top - 120) / 8
+            g.set_source_rgba(1, 1, 1, 0.6); g.set_line_width(4); g.move_to(cx + wid / 2 + 14, y); g.line_to(cx + wid / 2 + (52 if i % 2 == 0 else 34), y); g.stroke()
+
+def heat_wave(g, x, y, ang, p, col, a, ln=170):
+    """Una onda de calor (línea ondulada) que sale de (x, y) en dirección `ang`; p 0..1 = recorrido."""
+    dx, dy = math.cos(ang), math.sin(ang); nx, ny = -dy, dx
+    d0 = 30 + p * 140
+    g.set_source_rgba(*col, a * math.sin(p * math.pi)); g.set_line_width(7); g.set_line_cap(1)
+    for k in range(13):
+        u = k / 12; d = d0 + u * ln * 0.6; off = 14 * math.sin(u * 8 + p * 6)
+        px, py = x + dx * d + nx * off, y + dy * d + ny * off
+        if k == 0: g.move_to(px, py)
+        else: g.line_to(px, py)
+    g.stroke()
+
+def body_heat(F, t, release=1.0, trapped=0.0, cx=540, cy=1000, s=1.0, cool=0.0):
+    """Silueta de neón de pie que suelta calor (ondas ámbar) por manos y pies. `trapped` 0..1 = caja-cuarto
+    que lo encierra: las ondas rebotan y el cuarto se llena de neblina roja. `cool` tiñe el cuerpo de cian."""
+    c, g = F.b, F.g
+    bg_holo(c, t)
+    col = mix(GOLD, CYAN, cool)
+    if trapped > 0:
+        bx, by, bw, bh = 140, 470, 800, 1060
+        c.set_source(rad(cx, cy, 50, 650, [(0, (1.0, 0.3, 0.35, 0.35 * trapped)), (1, (1.0, 0.3, 0.35, 0.12 * trapped))]))
+        rrect(c, bx, by, bw, bh, 30); c.fill()
+        for lw, a in ((18, 0.25), (6, 0.9)):
+            g.set_source_rgba(*RED, a * trapped); g.set_line_width(lw); rrect(g, bx, by, bw, bh, 30); g.stroke()
+    g.save(); g.translate(cx, cy); g.scale(s, s)
+    b = 6 * math.sin(t * 2)
+    for lw, a in ((22, 0.25), (9, 0.95)):
+        g.set_source_rgba(*col, a); g.set_line_width(lw); g.set_line_cap(1); g.set_line_join(1)
+        g.arc(0, -330 + b, 70, 0, 6.3); g.stroke()
+        g.move_to(0, -250 + b); g.line_to(0, 60); g.stroke()
+        g.move_to(0, -190 + b); g.line_to(-170, -20); g.move_to(0, -190 + b); g.line_to(170, -20); g.stroke()
+        g.move_to(0, 60); g.line_to(-110, 330); g.move_to(0, 60); g.line_to(110, 330); g.stroke()
+    g.restore()
+    pts = [(-170, -20, math.pi * 1.0), (170, -20, 0.0), (-110, 330, math.pi * 0.75), (110, 330, math.pi * 0.25)]
+    for i, (px, py, ang) in enumerate(pts):
+        X, Y = cx + px * s, cy + py * s
+        g.set_source_rgba(*GOLD, 0.9 * release); g.arc(X, Y, 18, 0, 6.3); g.fill()
+        for j in range(3):
+            p = (t * 0.6 + j / 3 + i * 0.13) % 1
+            if trapped > 0.5: p = p * 0.55          # se queda cerca: no tiene adónde ir
+            heat_wave(g, X, Y, ang + 0.25 * math.sin(j * 2 + t), p, mix(GOLD, RED, trapped), release)
+
+def sock(g, x, y, s=1.0, col=None, a=1.0, ang=0.0, glow=0.0):
+    """Calcetín de neón (contorno, puño con rayas). `glow` 0..1 añade halo cálido."""
+    col = col or GOLD
+    g.save(); g.translate(x, y); g.rotate(ang); g.scale(s, s)
+    if glow > 0:
+        g.set_source(rad(0, 80, 10, 260, [(0, (1.0, 0.75, 0.35, 0.35 * glow)), (1, (1.0, 0.75, 0.35, 0))])); g.arc(0, 80, 260, 0, 6.3); g.fill()
+    g.set_source_rgba(*col, a); g.set_line_width(10); g.set_line_join(1); g.set_line_cap(1)
+    g.move_to(-70, -200); g.line_to(70, -200); g.line_to(70, 90); g.curve_to(70, 130, 110, 140, 160, 150)
+    g.curve_to(220, 165, 220, 260, 150, 260); g.line_to(-30, 260); g.curve_to(-90, 260, -70, 170, -70, 120); g.close_path(); g.stroke()
+    for k in range(3):
+        yy = -170 + k * 30; g.move_to(-70, yy); g.line_to(70, yy); g.stroke()
+    g.restore()
+
+def breeze(g, t, k=1.0, x0=80, x1=1000, y0=650, y1=1250, col=None):
+    """Corrientes de aire fresco de neón cruzando la escena (ventilar)."""
+    col = col or CYAN; r = random.Random(11)
+    for i in range(9):
+        y = r.uniform(y0, y1); sp = r.uniform(0.35, 0.6); p = (t * sp + r.random()) % 1
+        x = lerp(x0 - 200, x1, p); a = k * 0.8 * math.sin(p * math.pi)
+        g.set_source_rgba(*col, a); g.set_line_width(7); g.set_line_cap(1)
+        g.move_to(x, y); g.curve_to(x + 80, y - 30, x + 150, y + 30, x + 230, y); g.stroke()
