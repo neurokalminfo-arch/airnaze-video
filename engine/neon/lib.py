@@ -907,3 +907,83 @@ def breeze(g, t, k=1.0, x0=80, x1=1000, y0=650, y1=1250, col=None):
         x = lerp(x0 - 200, x1, p); a = k * 0.8 * math.sin(p * math.pi)
         g.set_source_rgba(*col, a); g.set_line_width(7); g.set_line_cap(1)
         g.move_to(x, y); g.curve_to(x + 80, y - 30, x + 150, y + 30, x + 230, y); g.stroke()
+
+# ---------------- añadidas 25-11-2026: deportista que jadea / camina y cronómetro-nariz ----------------
+def athlete(F, t, pose=0.0, walk=0.0, cx=540, floor=1420, s=1.0, col=None, mouth_air=0.0, nose_air=0.0, pant=0.0):
+    """Figura de neón de perfil (mira a la izquierda). `pose` 0 = doblado con las manos en las rodillas, 1 = erguido.
+    `walk` 0..1 = balanceo de piernas al caminar. `mouth_air` bocanadas rosas por la boca; `nose_air` aire cian que entra por la nariz;
+    `pant` 0..1 = el cuerpo sube y baja rápido (jadeo)."""
+    g = F.g; col = col or PINK
+    k = clamp(pose)
+    bob = pant * 10 * math.sin(t * 14)
+    def P(a, b): return (lerp(a[0], b[0], k), lerp(a[1], b[1], k))
+    hip = P((cx + 110, floor - 330), (cx, floor - 360))
+    sh = P((cx - 150, floor - 420 + bob), (cx - 10, floor - 690 + bob * 0.4))
+    head = P((cx - 240, floor - 400 + bob), (cx - 20, floor - 790 + bob * 0.4))
+    knee_f = P((cx + 40, floor - 170), (cx - 10, floor - 180))
+    sw = walk * 0.45 * math.sin(t * 5.5)
+    g.save(); g.translate(cx, floor); g.scale(s, s); g.translate(-cx, -floor)
+    for lw, aa in ((22, 0.18), (9, 0.95)):
+        g.set_source_rgba(*col, aa); g.set_line_width(lw); g.set_line_cap(1); g.set_line_join(1)
+        # piernas
+        for sgn in (1, -1):
+            a = sgn * sw
+            kx = hip[0] + (knee_f[0] - hip[0]) * math.cos(a) - (knee_f[1] - hip[1]) * math.sin(a) * 0.3 - sgn * sw * 120
+            ky = knee_f[1]
+            fx = kx + (cx + 70 * (1 - k) - kx) * 0.3 - sgn * sw * 160
+            g.move_to(*hip); g.line_to(kx, ky); g.line_to(fx, floor - 10); g.line_to(fx - 50, floor - 10); g.stroke()
+        # torso
+        g.move_to(*hip); g.line_to(*sh); g.stroke()
+        # brazos: doblado → manos en las rodillas; erguido → braceo suave
+        hand = P((knee_f[0] - 10, knee_f[1] - 30), (sh[0] + 30 - 60 * sw, sh[1] + 290))
+        elbow = P(((sh[0] + hand[0]) / 2 - 20, (sh[1] + hand[1]) / 2 + 40), (sh[0] - 30 - 40 * sw, sh[1] + 150))
+        g.move_to(*sh); g.line_to(*elbow); g.line_to(*hand); g.stroke()
+        # cabeza
+        g.arc(head[0], head[1], 52, 0, 6.3); g.stroke()
+    # boca / nariz
+    mx, my = head[0] - 50, head[1] + 22
+    nx, ny = head[0] - 56, head[1] - 4
+    if mouth_air > 0:
+        for i in range(5):
+            p = ((t * 2.4 + i / 5) % 1.0)
+            r = 14 + 46 * p
+            g.set_source_rgba(*PINK, mouth_air * 0.55 * (1 - p)); g.set_line_width(5)
+            g.arc(mx - 30 - p * 230, my + 10 + 40 * p * math.sin(i), r, 0, 6.3); g.stroke()
+        g.set_source_rgba(*PINK, mouth_air); g.arc(mx + 6, my, 12, 0, 6.3); g.fill()
+    if nose_air > 0:
+        for i in range(4):
+            p = ((t * 0.9 + i / 4) % 1.0)
+            x0 = nx - 260 * (1 - p); y0 = ny - 30 + 18 * math.sin(i * 2.1 + t)
+            g.set_source_rgba(*CYAN, nose_air * 0.85 * math.sin(p * math.pi)); g.set_line_width(6); g.set_line_cap(1)
+            g.move_to(x0, y0); g.line_to(x0 + 70, y0 + 4); g.stroke()
+    g.restore()
+
+def nose_stopwatch(F, t, prog, cx=540, cy=960, R=300, col=None, a=1.0):
+    """Cronómetro de neón con una nariz en el centro: el anillo se llena con `prog` 0..1 (de rosa a verde)."""
+    g, o = F.g, F.o
+    col = col or mix(PINK, GRN, clamp(prog))
+    g.save(); g.translate(cx, cy)
+    g.set_source_rgba(0.06, 0.05, 0.16, 0.85 * a); g.arc(0, 0, R, 0, 6.3); g.fill()
+    g.set_source_rgba(*VIO, 0.6 * a); g.set_line_width(6); g.arc(0, 0, R, 0, 6.3); g.stroke()
+    rrect(g, -40, -R - 70, 80, 50, 12); g.stroke()
+    g.move_to(0, -R - 20); g.line_to(0, -R); g.stroke()
+    for i in range(60):
+        an = i / 60 * 2 * math.pi - math.pi / 2; l = 34 if i % 5 == 0 else 16
+        g.set_source_rgba(1, 1, 1, (0.7 if i % 5 == 0 else 0.3) * a); g.set_line_width(5 if i % 5 == 0 else 3)
+        g.move_to((R - 30) * math.cos(an), (R - 30) * math.sin(an)); g.line_to((R - 30 - l) * math.cos(an), (R - 30 - l) * math.sin(an)); g.stroke()
+    if prog > 0:
+        for lw, aa in ((40, 0.25), (16, 1.0)):
+            g.set_source_rgba(*col, aa * a); g.set_line_width(lw); g.set_line_cap(1)
+            g.arc(0, 0, R + 2, -math.pi / 2, -math.pi / 2 + 2 * math.pi * clamp(prog)); g.stroke()
+    # nariz de perfil en el centro
+    s = R / 300.0
+    g.scale(s, s)
+    for lw, aa in ((20, 0.2), (8, 1.0)):
+        g.set_source_rgba(*col, aa * a); g.set_line_width(lw); g.set_line_cap(1); g.set_line_join(1)
+        g.move_to(-20, -150); g.curve_to(-30, -60, -90, 10, -100, 50); g.curve_to(-105, 80, -70, 95, -40, 85)
+        g.curve_to(-20, 100, 10, 95, 20, 70); g.stroke()
+    an = -math.pi / 2 + 2 * math.pi * clamp(prog)
+    g.set_source_rgba(1, 1, 1, 0.9 * a); g.set_line_width(7); g.set_line_cap(1)
+    g.move_to(0, 0); g.line_to(190 * math.cos(an), 190 * math.sin(an)); g.stroke()
+    g.arc(0, 0, 14, 0, 6.3); g.fill()
+    g.restore()
