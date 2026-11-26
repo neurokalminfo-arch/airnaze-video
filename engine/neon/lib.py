@@ -987,3 +987,79 @@ def nose_stopwatch(F, t, prog, cx=540, cy=960, R=300, col=None, a=1.0):
     g.move_to(0, 0); g.line_to(190 * math.cos(an), 190 * math.sin(an)); g.stroke()
     g.arc(0, 0, 14, 0, 6.3); g.fill()
     g.restore()
+
+
+# ---------------- añadidas 26-11-2026: perfil de boca y lengua, contador de respiraciones ----------------
+def mouth_profile(F, t, cx=540, cy=980, s=1.0, tongue=0.0, lips=1.0, nose_air=0.0, mouth_air=0.0, col=None, tongue_col=None, q=0.0):
+    """Corte de perfil de la cabeza (mirando a la izquierda) en holograma: paladar, lengua y vías de aire.
+    tongue 0 = lengua abajo (pegada a los dientes de abajo) .. 1 = apoyada en el paladar; lips 0 abiertos .. 1 cerrados;
+    nose_air / mouth_air = flujo de aire cian/rosa; q = signo de interrogación parpadeando sobre la lengua."""
+    g = F.g; col = col or VIO
+    tcol = tongue_col or mix(PINK, CYAN, tongue)
+    g.save(); g.translate(cx, cy); g.scale(s, s)
+    open_ = 1 - clamp(lips)
+    jaw = 60 * open_                        # la mandíbula baja al abrir
+    g.set_line_cap(1); g.set_line_join(1)
+    # contorno: frente → nariz → labio superior
+    for lw, aa in ((22, 0.18), (7, 0.95)):
+        g.set_source_rgba(*col, aa); g.set_line_width(lw)
+        g.move_to(-80, -430); g.curve_to(-150, -380, -170, -300, -165, -230)
+        g.curve_to(-200, -170, -260, -110, -270, -70); g.curve_to(-275, -40, -240, -30, -210, -35)
+        g.curve_to(-215, -10, -225, 10, -220, 30); g.line_to(-205, 40)
+        g.stroke()
+        # labio inferior + barbilla + cuello (se mueve con la mandíbula)
+        g.move_to(-205, 50 + jaw); g.curve_to(-225, 70 + jaw, -220, 100 + jaw, -200, 120 + jaw)
+        g.curve_to(-210, 170 + jaw, -190, 230 + jaw, -130, 250 + jaw); g.curve_to(-40, 270 + jaw, 60, 230, 120, 330)
+        g.stroke()
+        # nuca y cráneo
+        g.move_to(-80, -430); g.curve_to(150, -470, 330, -320, 320, -80); g.curve_to(315, 60, 260, 160, 230, 330); g.stroke()
+    # paladar (arco) y fosa nasal
+    g.set_source_rgba(*GOLD, 0.85); g.set_line_width(6)
+    g.move_to(-190, -10); g.curve_to(-120, -70, 0, -80, 90, -40); g.curve_to(130, -20, 150, 20, 150, 60); g.stroke()
+    g.set_source_rgba(*VIO, 0.45); g.set_line_width(4)
+    g.move_to(-235, -70); g.curve_to(-150, -140, 20, -150, 150, -90); g.curve_to(200, -60, 210, 0, 200, 80); g.stroke()
+    # dientes (arriba y abajo)
+    g.set_source_rgba(1, 1, 1, 0.85)
+    rrect(g, -200, -12, 26, 34, 6); g.fill()
+    rrect(g, -196, 36 + jaw, 24, 30, 6); g.fill()
+    # lengua: interpolación entre abajo y arriba
+    k = ease(tongue)
+    tip = (lerp(-170, -165, k), lerp(55 + jaw, -20, k))
+    mid = (lerp(-60, -40, k), lerp(70 + jaw, -55, k))
+    back_ = (lerp(70, 90, k), lerp(60 + jaw * 0.6, -25, k))
+    base = (lerp(120, 130, k), lerp(170, 150, k))
+    floor_ = (-120, lerp(110 + jaw, 60, k))
+    g.move_to(*tip); g.curve_to(tip[0] + 30, tip[1] - 30 * (1 - k) - 10 * k, mid[0] - 50, mid[1], *mid)
+    g.curve_to(mid[0] + 60, mid[1], back_[0] - 20, back_[1] - 10, *back_)
+    g.curve_to(back_[0] + 40, back_[1] + 20, base[0], base[1] - 40, *base)
+    g.curve_to(40, 170, -60, 130, *floor_); g.curve_to(-150, floor_[1] - 10, tip[0] - 10, tip[1] + 25, *tip); g.close_path()
+    g.set_source_rgba(*tcol, 0.35); g.fill_preserve()
+    g.set_source_rgba(*tcol, 0.95); g.set_line_width(7); g.stroke()
+    # aire por la nariz (cian) y por la boca (rosa)
+    for i in range(6):
+        p = (t * 0.9 + i / 6) % 1
+        if nose_air > 0.02:
+            x = lerp(-330, 180, p); y = -70 - 40 * math.sin(math.pi * (x + 260) / 460) if x > -260 else -55
+            g.set_source_rgba(*CYAN, nose_air * math.sin(math.pi * p)); g.arc(x, y, 13, 0, 6.3); g.fill()
+        if mouth_air > 0.02:
+            x = lerp(-340, 120, p); y = 25 + jaw * 0.5 + 12 * math.sin(p * 18)
+            g.set_source_rgba(*PINK, mouth_air * math.sin(math.pi * p)); g.arc(x, y, 14, 0, 6.3); g.fill()
+    if q > 0:
+        o = F.o; o.save(); o.translate(cx - 40 * s, cy - 170 * s)
+        o.select_font_face("Inter Display", 0, 1); o.set_font_size(150 * s)
+        o.set_source_rgba(*GOLD, q * (0.6 + 0.4 * math.sin(t * 5))); o.move_to(-40 * s, 0); o.show_text("?"); o.restore()
+    g.restore()
+
+
+def breath_counter(F, t, n_done, n=5, cx=540, cy=1450, gap=150, R=46, col=None):
+    """Fila de `n` lunas/círculos de neón que se llenan una a una (n_done puede ser fraccionario); el actual respira."""
+    g = F.g; col = col or CYAN
+    x0 = cx - gap * (n - 1) / 2
+    for i in range(n):
+        x = x0 + i * gap
+        f = clamp(n_done - i)
+        r = R * (1 + (0.15 * math.sin(t * 2.2) if 0 < f < 1 else 0))
+        g.set_source_rgba(*VIO, 0.5); g.set_line_width(5); g.arc(x, cy, r, 0, 6.3); g.stroke()
+        if f > 0:
+            g.set_source_rgba(*mix(VIO, col, f), 0.35 + 0.6 * f); g.arc(x, cy, r * (0.35 + 0.65 * f), 0, 6.3); g.fill()
+            g.set_source_rgba(*col, 0.9 * f); g.set_line_width(6); g.arc(x, cy, r, 0, 6.3); g.stroke()
