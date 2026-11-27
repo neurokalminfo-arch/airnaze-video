@@ -1063,3 +1063,46 @@ def breath_counter(F, t, n_done, n=5, cx=540, cy=1450, gap=150, R=46, col=None):
         if f > 0:
             g.set_source_rgba(*mix(VIO, col, f), 0.35 + 0.6 * f); g.arc(x, cy, r * (0.35 + 0.65 * f), 0, 6.3); g.fill()
             g.set_source_rgba(*col, 0.9 * f); g.set_line_width(6); g.arc(x, cy, r, 0, 6.3); g.stroke()
+
+
+# ---------------- añadidas 27-11-2026: plato de pizza de neón y engranaje-motor ----------------
+def pizza_plate(g, t, cx=540, cy=1000, s=1.0, slices=8, steam=1.0, col=None, a=1.0):
+    """Plato con pizza de neón (porciones `slices` de 8 que quedan) y vapor que sube (`steam` 0..1)."""
+    col = col or GOLD
+    g.save(); g.translate(cx, cy); g.scale(s, s)
+    g.set_source_rgba(*VIO, 0.6 * a); g.set_line_width(6); ell(g, 0, 40, 330, 120); g.stroke()
+    g.set_source_rgba(*VIO, 0.25 * a); ell(g, 0, 40, 290, 100); g.stroke()
+    n = int(round(clamp(slices / 8.0) * 8))
+    for k in range(n):
+        a0 = -math.pi / 2 + k * math.pi / 4; a1 = a0 + math.pi / 4
+        g.save(); g.scale(1, 0.38)
+        g.move_to(0, 0); g.arc(0, 0, 250, a0 + 0.03, a1 - 0.03); g.close_path()
+        g.set_source_rgba(*col, 0.18 * a); g.fill_preserve(); g.set_source_rgba(*col, 0.95 * a); g.set_line_width(7); g.stroke()
+        am = (a0 + a1) / 2
+        for rr, dd in ((150, 0.0), (205, 0.12)):
+            g.set_source_rgba(*RED, 0.9 * a); g.arc(rr * math.cos(am + dd), rr * math.sin(am + dd), 18, 0, 6.3); g.fill()
+        g.restore()
+    if steam > 0:
+        for i in range(4):
+            p = (t * 0.45 + i / 4) % 1; x = -120 + i * 80 + 20 * math.sin(t * 2 + i); y = -40 - 300 * p
+            g.set_source_rgba(1, 1, 1, steam * 0.55 * a * math.sin(p * math.pi)); g.set_line_width(7); g.set_line_cap(1)
+            g.move_to(x, y); g.curve_to(x + 30, y - 40, x - 30, y - 80, x, y - 120); g.stroke()
+    g.restore()
+
+
+def engine_gear(g, t, cx, cy, r=120, speed=1.0, col=None, a=1.0, glow=0.0):
+    """Engranaje de neón que gira (`speed` vueltas/s aprox.) con halo de calor `glow`: el 'motor encendido'."""
+    col = col or RED
+    if glow > 0:
+        g.set_source(rad(cx, cy, 10, r * 2.4, [(0, (*col, 0.45 * glow)), (1, (*col, 0))])); g.arc(cx, cy, r * 2.4, 0, 6.3); g.fill()
+    g.save(); g.translate(cx, cy); g.rotate(t * speed * 2.0)
+    teeth = 10
+    for k in range(teeth * 2):
+        ang = k * math.pi / teeth; rr = r if k % 2 == 0 else r * 0.8
+        x, y = rr * math.cos(ang), rr * math.sin(ang)
+        (g.move_to if k == 0 else g.line_to)(x, y)
+        ang2 = ang + math.pi / teeth * 0.6
+        g.line_to(rr * math.cos(ang2), rr * math.sin(ang2))
+    g.close_path(); g.set_source_rgba(*col, 0.15 * a); g.fill_preserve(); g.set_source_rgba(*col, 0.95 * a); g.set_line_width(7); g.set_line_join(1); g.stroke()
+    g.arc(0, 0, r * 0.3, 0, 6.3); g.stroke()
+    g.restore()
